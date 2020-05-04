@@ -1,0 +1,19 @@
+[package]
+name = "hanblas"
+version = "0.1.0"
+authors = ["JasonWang <1103870790@qq.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "hanblas"
+path = "src/lib.rs"
+
+[[bin]]
+name = "demo"
+path = "examples/demo.rs"
+
+
+[dependencies]
+
