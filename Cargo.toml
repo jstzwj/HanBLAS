@@ -16,4 +16,6 @@ path = "examples/demo.rs"
 
 
 [dependencies]
+libc = "0.2.69"
+num-complex = "0.2.4"
 

@@ -1,7 +1,11 @@
 
 pub mod util;
-pub mod sasum;
-pub mod srotg;
+pub mod asum;
+pub mod rotg;
+pub mod cblas;
+
+type c32 = num_complex::Complex<f32>;
+type c64 = num_complex::Complex<f64>;
 
 #[cfg(test)]
 mod tests {
