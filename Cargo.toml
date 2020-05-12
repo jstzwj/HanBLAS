@@ -10,6 +10,19 @@ edition = "2018"
 name = "hanblas"
 path = "src/lib.rs"
 
+[features]
+naive = []
+avx = []
+avx2 = []
+sse2 = []
+sse3 = []
+sse4_1 = []
+sse4_2 = []
+ssse3 = []
+neon = []
+
+default = ["naive"]
+
 [[bin]]
 name = "demo"
 path = "examples/demo.rs"
@@ -18,4 +31,5 @@ path = "examples/demo.rs"
 [dependencies]
 libc = "0.2.69"
 num-complex = "0.2.4"
-
+half = "1.6.0"
+rand = "0.7.3"
