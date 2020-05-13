@@ -2,7 +2,7 @@
 
 use super::asum;
 #[no_mangle]
-pub extern "C" fn sasum(n: i32, sx: *const f32, incx: i32) -> f32 {
+pub extern "C" fn cblas_sasum(n: i32, sx: *const f32, incx: i32) -> f32 {
     unsafe {
         return asum::sasum(
             n,

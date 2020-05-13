@@ -2,6 +2,7 @@
 extern crate test;
 
 pub mod util;
+pub mod kernel;
 // level 1
 pub mod asum;
 pub mod axpy;
@@ -38,7 +39,7 @@ mod tests {
     fn sasum_bench1(b: &mut Bencher) {
         let mut rng = rand::thread_rng();
         let mut sx = Vec::with_capacity(65536);
-        for i in 0..65536 {
+        for _i in 0..65536 {
             sx.push(rng.gen::<f32>());
         }
         b.iter(
@@ -52,7 +53,7 @@ mod tests {
     fn sasum_bench2(b: &mut Bencher) {
         let mut rng = rand::thread_rng();
         let mut sx = Vec::with_capacity(65536);
-        for i in 0..65536 {
+        for _i in 0..65536 {
             sx.push(rng.gen::<f32>());
         }
         b.iter(
