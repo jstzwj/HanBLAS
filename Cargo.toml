@@ -22,11 +22,18 @@ sse4_2 = []
 ssse3 = []
 neon = []
 
+multi_thread = []
+
 default = ["naive"]
 
 [[bin]]
-name = "demo"
-path = "examples/demo.rs"
+name = "benchmark_asum"
+path = "examples/benchmark_asum.rs"
+
+
+[[bin]]
+name = "benchmark_gemm"
+path = "examples/benchmark_gemm.rs"
 
 
 [dependencies]
@@ -35,3 +42,4 @@ num-complex = "0.2.4"
 half = "1.6.0"
 rand = "0.7.3"
 rayon = "1.3.0"
+csv = "1.1"

@@ -14,6 +14,7 @@ pub mod rotg;
 
 
 // level 3
+pub mod gemm;
 
 pub mod cblas;
 
