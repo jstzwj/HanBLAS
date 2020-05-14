@@ -18,11 +18,11 @@ pub fn sgemm(
     c: &mut [f32], 
     ldc: i32
 ) {
-    sgemm_callback(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
+    sgemm_always_correct(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
 }
 
 
-fn sgemm_callback(
+pub fn sgemm_always_correct(
     transa: u8, 
     transb: u8, 
     m: i32, 
@@ -110,37 +110,37 @@ fn sgemm_callback(
     if notb {
         if nota {
             // C := alpha*A*B + beta*C.
-            let m_left = m % 4;
-            let n_left = n % 4;
-            for m_i in 0..m_left {
-                for n_i in 0..n {
-                    c[ldc*n_i+m_i] = 0.0f32;
-                    for k_i in 0..k {
-                        c[ldc*n_i+m_i] = c[ldc*n_i+m_i] + a[lda*k_i+m_i] * b[ldb*n_i+k_i];
+            for j in 0..n {
+                if beta == zero {
+                    for i in 0..m {
+                        c[j*ldc + i] = zero;
                     }
                 }
-            }
-
-            for m_i in (m_left..m).step_by(4) {
-                for n_i in 0..n {
-                    c[ldc*n_i+m_i] = 0.0f32;
-                    c[ldc*n_i+m_i+1] = 0.0f32;
-                    c[ldc*n_i+m_i+2] = 0.0f32;
-                    c[ldc*n_i+m_i+3] = 0.0f32;
-                    for k_i in 0..k {
-                        c[ldc*n_i+m_i] += a[lda*k_i+m_i] * b[ldb*n_i+k_i];
-                        c[ldc*n_i+m_i+1] += a[lda*k_i+m_i] * b[ldb*n_i+k_i];
-                        c[ldc*n_i+m_i+2] += a[lda*k_i+m_i] * b[ldb*n_i+k_i];
-                        c[ldc*n_i+m_i+3] += a[lda*k_i+m_i] * b[ldb*n_i+k_i];
+                else if beta != one {
+                    for i in 1..m {
+                        c[j*ldc + i] = beta* c[j*ldc + i];
+                    }
+                }
+                for l in 0..k {
+                    let temp = alpha*b[j*ldb + l];
+                    for i in 0..m {
+                        c[j*ldc + i] = c[j*ldc + i] + temp*a[l*lda + i];
                     }
                 }
             }
         } else {
             // C := alpha*A**T*B + beta*C
-            for i in 0..m {
-                for j in 0..n {
-                    for p in 0..k {
-                        c[ldc*j+i] = c[ldc*j+i] + a[lda*i+p] * b[ldb*j+p];
+            for j in 0..n {
+                for i in 0..m {
+                    let mut temp = zero;
+                    for l in 0..k {
+                        temp = temp + a[i*lda + l]*b[j*ldb + l];
+                    }
+                    if beta == zero {
+                        c[j*ldc + i] = alpha*temp;
+                    }
+                    else {
+                        c[j*ldc + i] = alpha*temp + beta*c[j*ldc + i];
                     }
                 }
             }
@@ -148,19 +148,35 @@ fn sgemm_callback(
     } else {
         if nota {
             // C := alpha*A*B**T + beta*C
-            for i in 0..m {
-                for j in 0..n {
-                    for p in 0..k {
-                        c[ldc*j+i] = c[ldc*j+i] + a[lda*p+i] * b[ldb*p+j];
+            for j in 0..n {
+                if beta == zero {
+                    for i in 0..m {
+                        c[j*ldc + i] = zero;
+                    }
+                } else if beta != one {
+                    for i in 0..m {
+                        c[j*ldc + i] = beta*c[j*ldc + i];
+                    }
+                }
+                for l in 0..k {
+                    let temp = alpha*b[l*ldb + j];
+                    for i in 0..m {
+                        c[j*ldc + i] = c[j*ldc + i] + temp*a[l*lda + i];
                     }
                 }
             }
         } else {
             // C := alpha*A**T*B**T + beta*C
-            for i in 0..m {
-                for j in 0..n {
-                    for p in 0..k {
-                        c[ldc*j+i] = c[ldc*j+i] + a[lda*i+p] * b[ldb*p+j];
+            for j in 0..n {
+                for i in 0..m {
+                    let mut temp = zero;
+                    for l in 0..k {
+                        temp = temp + a[i*lda+l]*b[l*ldb+j];
+                    }
+                    if beta != zero {
+                        c[j*ldc + i] = alpha*temp;
+                    } else {
+                        c[j*ldc + i] = alpha*temp + beta*c[j*ldc + i];
                     }
                 }
             }

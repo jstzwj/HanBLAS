@@ -7,13 +7,17 @@ fn main() {
     let GHz_of_processor = 2.0;
 
     let mut rng = rand::thread_rng();
-    let test_num = 1000;
+    let test_num = 20;
     let mut wtr = csv::Writer::from_path("gemm.csv").unwrap();
 
     wtr.write_record(&["size", "GFLOPS"]).unwrap();
 
-    let mut size = 1;
-    while size < 1000 {
+    for size in (40..800).step_by(40) {
+        let m = size as f32;
+        let n = size as f32;
+        let k = size as f32;
+        let gflops = 2.0 * m * n * k * 1.0e-09;
+
         let mut a = Vec::with_capacity(size);
         for _i in 0..size {
             for _j in 0..size {
@@ -35,8 +39,9 @@ fn main() {
             }
         }
         
-        let now = Instant::now();
+        let mut times = Vec::new();
         for _ in 0..test_num {
+            let now = Instant::now();
             hanblas::gemm::sgemm(
                 'n' as u8,
                 'n' as u8,
@@ -52,14 +57,16 @@ fn main() {
                 &mut c,
                 size as i32
             );
+            let time = now.elapsed().as_nanos();
+            times.push(time);
         }
-        let time = (now.elapsed().as_nanos() as f32) / (test_num as f32);
-        let gflops = (nprocessors as f32) * (nflops_per_cycle as f32) * GHz_of_processor * time / 1000.0;
-        wtr.write_record(&[size.to_string(), gflops.to_string()]).unwrap();
+        
+        let min_time = times.iter().min().unwrap();
+        let min_time_sec = (*min_time as f32) / 1000.0;
+        wtr.write_record(&[size.to_string(), (gflops/min_time_sec).to_string()]).unwrap();
         println!("{}", size);
 
         // size += 10i32.pow((size as f32).log10() as u32) as usize + 1;
-        size += 10;
     }
     wtr.flush().unwrap();
     

@@ -1,6 +1,7 @@
 #![feature(test)]
 extern crate test;
 
+
 pub mod util;
 pub mod kernel;
 // level 1
@@ -36,31 +37,16 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 
-    #[bench]
-    fn sasum_bench1(b: &mut Bencher) {
+    #[test]
+    fn test_sasum_1() {
         let mut rng = rand::thread_rng();
         let mut sx = Vec::with_capacity(65536);
         for _i in 0..65536 {
             sx.push(rng.gen::<f32>());
         }
-        b.iter(
-            || {
-                super::asum::sasum(1001, &sx[..3001], 3)
-            }
-        );
-    }
 
-    #[bench]
-    fn sasum_bench2(b: &mut Bencher) {
-        let mut rng = rand::thread_rng();
-        let mut sx = Vec::with_capacity(65536);
-        for _i in 0..65536 {
-            sx.push(rng.gen::<f32>());
-        }
-        b.iter(
-            || {
-                super::asum::sasum(3001, &sx[..3001], 1)
-            }
-        );
+        let result = super::asum::sasum(1001, &sx[..3001], 3);
+        let result_correct = super::asum::sasum_always_correct(1001, &sx[..3001], 3);
+        assert!((result - result_correct).abs() < 1e-3);
     }
 }
