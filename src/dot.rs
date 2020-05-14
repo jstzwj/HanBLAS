@@ -1,6 +1,10 @@
 use self::super::{c16, c32};
 
 pub fn sdot(n: i32, x: &[f32], incx: i32, y: &[f32], incy: i32) -> f32 {
+    return sdot(n, x, incx, y, incy);
+}
+
+pub fn sdot_always_correct(n: i32, x: &[f32], incx: i32, y: &[f32], incy: i32) -> f32 {
     let mut stemp = 0.0e0;
     if n <= 0 {return stemp;}
     if incx == 1 && incy == 1 {

@@ -1,25 +1,7 @@
+
 use crate::util::lsame;
 
-pub fn sgemm(
-    transa: u8, 
-    transb: u8, 
-    m: i32, 
-    n: i32, 
-    k: i32, 
-    alpha: f32, 
-    a: &[f32], 
-    lda: i32, 
-    b: &[f32], 
-    ldb: i32, 
-    beta: f32, 
-    c: &mut [f32], 
-    ldc: i32
-) {
-    sgemm_always_correct(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
-}
-
-
-pub fn sgemm_always_correct(
+pub fn sgemm_generic(
     transa: u8, 
     transb: u8, 
     m: i32, 

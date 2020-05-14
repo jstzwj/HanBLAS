@@ -7,6 +7,10 @@ pub fn sign(a:&f32, b:&f32) -> f32 {
     }
 }
 
+pub fn lsame(i: u8, c:char) -> bool{
+    return (i as char).to_lowercase().to_string() == c.to_lowercase().to_string();
+}
+
 
 pub fn scomparea(a:&[f32], b:&[f32]) -> f32 {
     let mut max_diff: f32 = 0.0;
