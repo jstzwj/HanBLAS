@@ -4,7 +4,7 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 
 
 
-## Currently supported functions
+## Supported functions
 
 ### level1
 
@@ -15,7 +15,7 @@ real
 
 double
 
-
+- dasum
 
 complex
 
