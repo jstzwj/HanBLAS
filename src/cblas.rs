@@ -1,6 +1,6 @@
 
-
-use super::asum;
+use crate::HanInt;
+use crate::asum;
 
 type CBLAS_INDEX = usize;
 
@@ -34,9 +34,9 @@ enum CBLAS_SIDE {
 pub extern "C" fn cblas_sasum(n: i32, sx: *const f32, incx: i32) -> f32 {
     unsafe {
         return asum::sasum(
-            n as isize,
+            n as HanInt,
             std::slice::from_raw_parts(sx, (1 + (n-1)*incx.abs())as usize),
-            incx as isize
+            incx as HanInt
         );
     }
 }

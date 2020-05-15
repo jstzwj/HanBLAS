@@ -1,6 +1,8 @@
 use std::time::{Duration, Instant};
 use rand::Rng;
 
+use hanblas::HanInt;
+
 fn main() {
     let mut rng = rand::thread_rng();
     let test_num = 1000;
@@ -17,7 +19,7 @@ fn main() {
         
         let now = Instant::now();
         for _ in 0..test_num {
-            hanblas::asum::sasum(size as isize, &sx[..size], 1);
+            hanblas::asum::sasum(size as HanInt, &sx[..size], 1);
         }
         let time = (now.elapsed().as_nanos() as f32) / (test_num as f32);
         wtr.write_record(&[size.to_string(), time.to_string()]).unwrap();

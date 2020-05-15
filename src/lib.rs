@@ -20,12 +20,15 @@ pub mod gemm;
 pub mod cblas;
 
 
+// custom types
+pub type HanInt = i32;
+
 #[allow(non_camel_case_types)]
-type c16 = num_complex::Complex<half::f16>;
+pub type c16 = num_complex::Complex<half::f16>;
 #[allow(non_camel_case_types)]
-type c32 = num_complex::Complex<f32>;
+pub type c32 = num_complex::Complex<f32>;
 #[allow(non_camel_case_types)]
-type c64 = num_complex::Complex<f64>;
+pub type c64 = num_complex::Complex<f64>;
 
 
 #[cfg(test)]

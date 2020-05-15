@@ -1,22 +1,24 @@
 
+use crate::HanInt;
+
 pub fn daxpy(
-    n: i32, 
+    n: HanInt, 
     alpha: f64, 
     x: &[f64], 
-    incx: i32, 
+    incx: HanInt, 
     y: &mut [f64], 
-    incy: i32
+    incy: HanInt
 ) {
     return daxpy_always_correct(n, alpha, x, incx, y, incy);
 }
 
 pub fn daxpy_always_correct(
-    n: i32, 
+    n: HanInt, 
     alpha: f64, 
     x: &[f64], 
-    incx: i32, 
+    incx: HanInt, 
     y: &mut [f64], 
-    incy: i32
+    incy: HanInt
 ) {
     if n <= 0 {return;}
     if alpha == 0.0f64 {return;}
