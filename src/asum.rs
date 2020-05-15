@@ -1,5 +1,5 @@
 
-pub fn sasum(n: i32, x: &[f32], incx: i32) -> f32 {
+pub fn sasum(n: isize, x: &[f32], incx: isize) -> f32 {
     #[cfg(target_arch = "x86_64")]
     unsafe {
         #[cfg(not(feature = "multi_thread"))]
@@ -66,8 +66,8 @@ pub fn sasum(n: i32, x: &[f32], incx: i32) -> f32 {
     return crate::kernel::generic::asum::sasum_generic(n, x, incx);
 }
 
-pub fn sasum_always_correct(n: i32, x: &[f32], incx: i32) -> f32 {
-    assert!(x.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
+pub fn sasum_always_correct(n: isize, x: &[f32], incx: isize) -> f32 {
+    assert!(x.len() as isize == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
     let mut stemp = 0.0e0f32;
     if n <= 0 || incx <= 0 {
         return stemp;
@@ -97,12 +97,12 @@ pub fn sasum_always_correct(n: i32, x: &[f32], incx: i32) -> f32 {
     return stemp;
 }
 
-pub fn dasum(n: i32, x: &[f64], incx: i32) -> f64 {
+pub fn dasum(n: isize, x: &[f64], incx: isize) -> f64 {
     return crate::kernel::generic::asum::dasum_generic(n, x, incx);
 }
 
-pub fn dasum_always_correct(n: i32, x: &[f64], incx: i32) -> f64 {
-    assert!(x.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
+pub fn dasum_always_correct(n: isize, x: &[f64], incx: isize) -> f64 {
+    assert!(x.len() as isize == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
     let mut ret = 0.0e0f64;
     let mut stemp = 0.0e0f64;
     if n <= 0 || incx <= 0 {

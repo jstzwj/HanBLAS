@@ -5,7 +5,7 @@ use std::arch::x86::*;
 
 #[cfg(any(feature = "avx2", feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub unsafe fn sasum_x86_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_avx(n: isize, sx: &[f32], incx: isize) -> f32 {
     assert!(sx.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of sx is not 1+(n-1)*abs(incx)");
     let mut result = 0.0e0f32;
 
@@ -52,7 +52,7 @@ pub unsafe fn sasum_x86_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
     feature = "sse4_1", 
     feature = "sse4_2"))]
 #[target_feature(enable = "sse")]
-pub unsafe fn sasum_x86_sse(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_sse(n: isize, sx: &[f32], incx: isize) -> f32 {
     assert!(sx.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of sx is not 1+(n-1)*abs(incx)");
     let mut result = 0.0e0f32;
     let mut temp: std::arch::x86::__m128 = std::arch::x86::_mm_setzero_ps();

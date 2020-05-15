@@ -3,14 +3,14 @@ use rayon::prelude::*;
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::*;
 
-fn sasum_check_arguments(n: i32, sx: &[f32], incx: i32) {
+fn sasum_check_arguments(n: isize, sx: &[f32], incx: isize) {
     assert!(n >= 0, "n must be positive or zero");
-    assert!(sx.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of sx is not 1+(n-1)*abs(incx)");
+    assert!(sx.len() as isize == 1 + (n-1)*incx.abs(), "the dimension of sx is not 1+(n-1)*abs(incx)");
 }
 
 #[cfg(any(feature = "avx2", feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub unsafe fn sasum_x86_64_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_64_avx(n: isize, sx: &[f32], incx: isize) -> f32 {
     sasum_check_arguments(n, sx, incx);
     let mut result = 0.0e0f32;
 
@@ -52,7 +52,7 @@ pub unsafe fn sasum_x86_64_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
 
 #[cfg(all(any(feature = "avx2", feature = "avx"), feature = "multi_thread"))]
 #[target_feature(enable = "avx")]
-pub unsafe fn sasum_x86_64_mt_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_64_mt_avx(n: isize, sx: &[f32], incx: isize) -> f32 {
     // small size disable mt
     if 1 + (n-1)*incx.abs() < 500000 {
         return sasum_x86_64_avx(n, sx, incx);
@@ -115,7 +115,7 @@ pub unsafe fn sasum_x86_64_mt_avx(n: i32, sx: &[f32], incx: i32) -> f32 {
     feature = "sse4_1", 
     feature = "sse4_2"))]
 #[target_feature(enable = "sse")]
-pub unsafe fn sasum_x86_64_sse(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_64_sse(n: isize, sx: &[f32], incx: isize) -> f32 {
     sasum_check_arguments(n, sx, incx);
     let mut result = 0.0e0f32;
     let mut temp: std::arch::x86_64::__m128 = std::arch::x86_64::_mm_setzero_ps();
@@ -163,7 +163,7 @@ pub unsafe fn sasum_x86_64_sse(n: i32, sx: &[f32], incx: i32) -> f32 {
     feature = "multi_thread")
 )]
 #[target_feature(enable = "sse")]
-pub unsafe fn sasum_x86_64_mt_sse(n: i32, sx: &[f32], incx: i32) -> f32 {
+pub unsafe fn sasum_x86_64_mt_sse(n: isize, sx: &[f32], incx: isize) -> f32 {
     // small size disable mt
     if 1 + (n-1)*incx.abs() < 100000 {
         return sasum_x86_64_sse(n, sx, incx);

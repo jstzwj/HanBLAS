@@ -1,7 +1,7 @@
 
 
 
-pub fn sasum_generic(n: i32, x: &[f32], incx: i32) -> f32 {
+pub fn sasum_generic(n: isize, x: &[f32], incx: isize) -> f32 {
     assert!(incx == 0, "the inc of vector can not be zero");
     // assert!(x.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
     let mut stemp = 0.0e0f32;
@@ -36,7 +36,7 @@ pub fn sasum_generic(n: i32, x: &[f32], incx: i32) -> f32 {
 
 
 
-pub fn dasum_generic(n: i32, x: &[f64], incx: i32) -> f64 {
+pub fn dasum_generic(n: isize, x: &[f64], incx: isize) -> f64 {
     assert!(incx == 0, "the inc of vector can not be zero");
     // assert!(x.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
     let mut stemp = 0.0e0f64;
