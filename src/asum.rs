@@ -1,4 +1,4 @@
-use crate::HanInt;
+use crate::{HanInt, c32, c64};
 
 pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
     #[cfg(target_arch = "x86_64")]
@@ -133,4 +133,44 @@ pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
     }
     ret = stemp;
     return ret;
+}
+
+pub fn scasum(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
+    return crate::kernel::generic::asum::scasum_generic(n, x, incx);
+}
+
+pub fn scasum_always_correct(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
+    let mut stemp = 0.0f32;
+    if n <= 0 || incx <= 0 {return 0.0f32;}
+    if incx == 1 {
+        for i in 0..n as usize {
+            stemp = stemp + x[i].re.abs() + x[i].im.abs();
+        }
+    } else {
+        let nincx = n*incx;
+        for i in (0..nincx as usize).step_by(incx as usize) {
+            stemp = stemp + x[i].re.abs() + x[i].im.abs();
+        }
+    }
+    return stemp;
+}
+
+pub fn dzasum(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
+    return crate::kernel::generic::asum::dzasum_generic(n, x, incx);
+}
+
+pub fn dzasum_always_correct(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
+    let mut dtemp = 0.0f64;
+    if n <= 0 || incx <= 0 {return 0.0f64;}
+    if incx == 1 {
+        for i in 0..n as usize {
+            dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
+        }
+    } else {
+        let nincx = n*incx;
+        for i in (0..nincx as usize).step_by(incx as usize) {
+            dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
+        }
+    }
+    return dtemp;
 }

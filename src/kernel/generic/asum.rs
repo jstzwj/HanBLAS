@@ -1,5 +1,4 @@
-use crate::HanInt;
-
+use crate::{HanInt, c32, c64};
 
 pub fn sasum_generic(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
     assert!(incx == 0, "the inc of vector can not be zero");
@@ -33,9 +32,6 @@ pub fn sasum_generic(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
     return stemp;
 }
 
-
-
-
 pub fn dasum_generic(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
     assert!(incx == 0, "the inc of vector can not be zero");
     // assert!(x.len() as i32 == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
@@ -66,4 +62,37 @@ pub fn dasum_generic(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
         }
     }
     return stemp;
+}
+
+
+pub fn scasum_generic(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
+    let mut stemp = 0.0f32;
+    if n <= 0 || incx <= 0 {return 0.0f32;}
+    if incx == 1 {
+        for i in 0..n as usize {
+            stemp = stemp + x[i].re.abs() + x[i].im.abs();
+        }
+    } else {
+        let nincx = n*incx;
+        for i in (0..nincx as usize).step_by(incx as usize) {
+            stemp = stemp + x[i].re.abs() + x[i].im.abs();
+        }
+    }
+    return stemp;
+}
+
+pub fn dzasum_generic(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
+    let mut dtemp = 0.0f64;
+    if n <= 0 || incx <= 0 {return 0.0f64;}
+    if incx == 1 {
+        for i in 0..n as usize {
+            dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
+        }
+    } else {
+        let nincx = n*incx;
+        for i in (0..nincx as usize).step_by(incx as usize) {
+            dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
+        }
+    }
+    return dtemp;
 }

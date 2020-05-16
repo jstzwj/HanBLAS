@@ -1,4 +1,4 @@
-use self::super::{c16, c32};
+use self::super::{c32, c64};
 
 pub fn scopy(n: i32, x: &[f32], incx: i32, y: &mut [f32], incy: i32) {
     return scopy_always_correct(n, x, incx, y, incy);
@@ -113,12 +113,12 @@ pub fn ccopy_always_correct(n: i32, x: &[c32], incx: i32, y: &mut [c32], incy: i
 }
 
 
-pub fn zcopy(n: i32, x: &[c16], incx: i32, y: &mut [c16], incy: i32) {
+pub fn zcopy(n: i32, x: &[c64], incx: i32, y: &mut [c64], incy: i32) {
 
 }
 
 
-pub fn zcopy_always_correct(n: i32, x: &[c16], incx: i32, y: &mut [c16], incy: i32) {
+pub fn zcopy_always_correct(n: i32, x: &[c64], incx: i32, y: &mut [c64], incy: i32) {
     if n <= 0 { return; }
     if incx == 1 && incy == 1 {
         for i in 0..n as usize {
