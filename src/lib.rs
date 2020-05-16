@@ -1,6 +1,3 @@
-#![feature(test)]
-extern crate test;
-
 
 pub mod util;
 pub mod kernel;
@@ -9,7 +6,10 @@ pub mod asum;
 pub mod axpy;
 pub mod copy;
 pub mod dot;
+pub mod rot;
+pub mod rotm;
 pub mod rotg;
+pub mod rotmg;
 
 // level 2
 
@@ -33,7 +33,6 @@ pub type c64 = num_complex::Complex<f64>;
 
 #[cfg(test)]
 mod tests {
-    use test::Bencher;
     use rand::Rng;
 
     #[test]

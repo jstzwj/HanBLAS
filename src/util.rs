@@ -1,11 +1,13 @@
+use num_traits::{Zero, Float};
 
-pub fn sign(a:&f32, b:&f32) -> f32 {
-    if *b >= 0.0f32 {
+pub fn sign<T:Float>(a:&T, b:&T) -> T {
+    if *b >= Zero::zero() {
         return a.abs();
     } else {
         return -a.abs();
     }
 }
+
 
 pub fn lsame(i: u8, c:char) -> bool{
     return (i as char).to_lowercase().to_string() == c.to_lowercase().to_string();

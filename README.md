@@ -11,6 +11,9 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 - dasum
 - scasum
 - dzasum
+- sdot
+- ddot
+- dsdot
 - scopy
 - dasum
 
