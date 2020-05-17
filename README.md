@@ -15,7 +15,14 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 - ddot
 - dsdot
 - scopy
-- dasum
+- isamax
+- idamax
+- icamax
+- izamax
+- isamin
+- idamin
+- icamin
+- izamin
 
 
 
