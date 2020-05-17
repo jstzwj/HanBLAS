@@ -1,4 +1,4 @@
-use self::super::{HanInt, c16, c32};
+use self::super::{HanInt, c32, c64};
 
 pub fn sdot(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f32 {
     return sdot_always_correct(n, x, incx, y, incy);
@@ -27,13 +27,13 @@ pub fn sdot_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: 
     } else {
         let mut ix = 1;
         let mut iy = 1;
-        if (incx < 0) {
+        if incx < 0 {
             ix = (-n+1)*incx + 1;
         }
-        if (incy < 0) {
+        if incy < 0 {
             iy = (-n+1)*incy + 1;
         }
-        for i in 0..n {
+        for _ in 0..n {
             stemp = stemp + x[ix as usize]*y[iy as usize];
             ix = ix + incx;
             iy = iy + incy;
@@ -48,7 +48,41 @@ pub fn ddot(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: HanInt) -> f64 
 }
 
 pub fn ddot_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: HanInt) -> f64 {
-    return 0.0;
+    let mut ret = 0.0f64;
+    if n <= 0 {return ret;}
+    if incx == 1 && incy == 1 {
+        let m = n % 4;
+        if m != 0 {
+            for i in 0..m as usize {
+                ret = ret + x[i]*y[i];
+            }
+            if n < 4 {
+                return ret;
+            }
+        }
+        for i in (m as usize..n as usize).step_by(4) {
+            ret = ret
+                + x[i]*y[i]
+                + x[i+1]*y[i+1]
+                + x[i+2]*y[i+2]
+                + x[i+3]*y[i+3];
+        }
+    } else {
+        let mut ix = 1;
+        let mut iy = 1;
+        if incx < 0 {
+            ix = (-n+1)*incx + 1;
+        }
+        if incy < 0 {
+            iy = (-n+1)*incy + 1;
+        }
+        for _ in 0..n {
+            ret = ret + x[ix as usize]*y[iy as usize];
+            ix = ix + incx;
+            iy = iy + incy;
+        }
+    }
+    return ret;
 }
 
 pub fn dsdot(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f64 {
