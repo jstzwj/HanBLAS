@@ -2,9 +2,9 @@ use std::time::{Duration, Instant};
 use rand::Rng;
 
 fn main() {
-    let nflops_per_cycle = 4;
-    let nprocessors = 1;
-    let GHz_of_processor = 2.0;
+    // let nflops_per_cycle = 4;
+    // let nprocessors = 1;
+    // let GHz_of_processor = 2.0;
 
     let mut rng = rand::thread_rng();
     let test_num = 20;
@@ -62,9 +62,8 @@ fn main() {
         }
         
         let min_time = times.iter().min().unwrap();
-        let min_time_sec = (*min_time as f32) / 1000.0;
+        let min_time_sec = (*min_time as f32) / 1e9;
         wtr.write_record(&[size.to_string(), (gflops/min_time_sec).to_string()]).unwrap();
-        println!("{}", size);
 
         // size += 10i32.pow((size as f32).log10() as u32) as usize + 1;
     }

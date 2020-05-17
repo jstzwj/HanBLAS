@@ -64,7 +64,10 @@ pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
         return crate::kernel::x86::asum::sasum_x86_avx2(n, x, incx);
     }
 
-    return crate::kernel::generic::asum::sasum_generic(n, x, incx);
+    unsafe {
+        // return crate::kernel::generic::asum::sasum_generic(n, x.as_ptr(), incx);
+        return sasum_always_correct(n, x, incx);
+    }
 }
 
 pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
@@ -74,16 +77,16 @@ pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
         return stemp;
     }
     if incx == 1 {
-        let m = n%6;
+        let m = n%8;
         if m != 0 {
             for i in 0..m {
                 stemp = stemp + x[i as usize].abs();
             }
-            if n < 6 {
+            if n < 8 {
                 return stemp;
             }
         }
-        for i in (m as usize..n as usize).step_by(6) {
+        for i in (m as usize..n as usize).step_by(8) {
             stemp = stemp + x[i].abs() + x[i + 1].abs() +
                 x[i + 2].abs() + x[i + 3].abs() +
                 x[i + 4].abs() + x[i + 5].abs() +
@@ -99,7 +102,9 @@ pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
 }
 
 pub fn dasum(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
-    return crate::kernel::generic::asum::dasum_generic(n, x, incx);
+    unsafe {
+        return crate::kernel::generic::asum::dasum_generic(n, x.as_ptr(), incx);
+    }
 }
 
 pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
@@ -136,7 +141,9 @@ pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
 }
 
 pub fn scasum(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
-    return crate::kernel::generic::asum::scasum_generic(n, x, incx);
+    unsafe {
+        return crate::kernel::generic::asum::scasum_generic(n, x.as_ptr(), incx);
+    }
 }
 
 pub fn scasum_always_correct(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
@@ -156,7 +163,9 @@ pub fn scasum_always_correct(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
 }
 
 pub fn dzasum(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
-    return crate::kernel::generic::asum::dzasum_generic(n, x, incx);
+    unsafe {
+        return crate::kernel::generic::asum::dzasum_generic(n, x.as_ptr(), incx);
+    }
 }
 
 pub fn dzasum_always_correct(n: HanInt, x: &[c64], incx: HanInt) -> f64 {

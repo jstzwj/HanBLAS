@@ -56,6 +56,19 @@ mod tests {
     }
 
     #[test]
+    fn test_sasum_2() {
+        let mut rng = rand::thread_rng();
+        let mut sx = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            sx.push(rng.gen::<f32>());
+        }
+
+        let result = super::asum::sasum(1001, &sx[..1001], 1);
+        let result_correct = super::asum::sasum_always_correct(1001, &sx[..1001], 1);
+        assert!((result - result_correct).abs() < 1e-3);
+    }
+
+    #[test]
     fn test_gemm_1() {
         let mut rng = rand::thread_rng();
 
