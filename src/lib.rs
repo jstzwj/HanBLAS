@@ -1,3 +1,4 @@
+#![feature(asm)]
 
 pub mod util;
 pub mod kernel;

@@ -2,6 +2,7 @@ use std::time::{Duration, Instant};
 use rand::Rng;
 
 use hanblas::HanInt;
+use blas::*;
 
 fn main() {
     let mut rng = rand::thread_rng();
@@ -24,6 +25,11 @@ fn main() {
         for _ in 0..test_num {
             let now = Instant::now();
             hanblas::asum::sasum(size as HanInt, &sx, 1);
+            /*
+            unsafe {
+                blas::sasum(size as i32, &sx, 1);
+            }
+            */
             times.push(now.elapsed().as_nanos());
         }
         let min_time = times.iter().min().unwrap();

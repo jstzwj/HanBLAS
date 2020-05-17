@@ -1,73 +1,96 @@
 use crate::{HanInt, c32, c64};
+use std::ptr::{read_volatile, write_volatile};
 
 pub unsafe fn sasum_generic(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
-    let mut stemp = 0.0e0f32;
+    let mut ret = 0.0e0f32;
     if n <= 0 || incx <= 0 {
-        return stemp;
+        return ret;
     }
 
     if incx == 1 {
         let mut px = x;
         let px_end = x.offset(n as isize);
-        let m = n%8;
+
+        let m = n%4;
         if m != 0 {
             for _ in 0..m {
-                stemp = stemp + (*px).abs();
+                ret = ret + (*px).abs();
                 px = px.offset(1);
             }
-            if n < 8 {
-                return stemp;
+            if n < 4 {
+                return ret;
             }
         }
+
+        let mut sum1 = 0.0f32;
+        let mut sum2 = 0.0f32;
+        let mut sum3 = 0.0f32;
+        let mut sum4 = 0.0f32;
+
         while px < px_end {
-            stemp = stemp + 
-                (*px).abs() + (*px.offset(1)).abs() +
-                (*px.offset(2)).abs() + (*px.offset(3)).abs() +
-                (*px.offset(4)).abs() + (*px.offset(5)).abs() +
-                (*px.offset(6)).abs() + (*px.offset(7)).abs();
-            px = px.offset(8);
+            sum1 = sum1 + (*px).abs();
+            sum2 = sum2 + (*px.offset(1)).abs();
+            sum3 = sum3 + (*px.offset(2)).abs();
+            sum4 = sum4 + (*px.offset(3)).abs();
+
+            px = px.offset(4);
         }
+
+        ret = ret + sum1 + sum2 + sum3 + sum4;
     } else {
         let mut px = x;
         for _ in 0..n {
-            stemp = stemp + (*px).abs();
+            ret = ret + (*px).abs();
             px = px.offset(incx as isize);
         }
     }
-    return stemp;
+    return ret;
 }
 
 pub unsafe fn dasum_generic(n: HanInt, x: *const f64, incx: HanInt) -> f64 {
-    let mut stemp = 0.0e0f64;
+    let mut ret = 0.0e0f64;
     if n <= 0 || incx <= 0 {
-        return stemp;
+        return ret;
     }
 
     if incx == 1 {
-        let m = n%8;
+        let mut px = x;
+        let px_end = x.offset(n as isize);
+
+        let m = n%4;
         if m != 0 {
-            for i in 0..m {
-                stemp = stemp + (*x.offset(i as isize)).abs();
+            for _ in 0..m {
+                ret = ret + (*px).abs();
+                px = px.offset(1);
             }
-            if n < 8 {
-                return stemp;
+            if n < 4 {
+                return ret;
             }
         }
-        for i in (m as isize..n as isize).step_by(8) {
-            stemp = stemp + 
-                (*x.offset(i)).abs() + (*x.offset(i+1)).abs() +
-                (*x.offset(i+2)).abs() + (*x.offset(i+3)).abs() +
-                (*x.offset(i+4)).abs() + (*x.offset(i+5)).abs() +
-                (*x.offset(i+6)).abs() + (*x.offset(i+7)).abs();
+
+        let mut sum1 = 0.0f64;
+        let mut sum2 = 0.0f64;
+        let mut sum3 = 0.0f64;
+        let mut sum4 = 0.0f64;
+
+        while px < px_end {
+            sum1 = sum1 + (*px).abs();
+            sum2 = sum2 + (*px.offset(1)).abs();
+            sum3 = sum3 + (*px.offset(2)).abs();
+            sum4 = sum4 + (*px.offset(3)).abs();
+
+            px = px.offset(4);
         }
+
+        ret = ret + sum1 + sum2 + sum3 + sum4;
     } else {
         let mut px = x;
         for _ in 0..n {
-            stemp = stemp + (*px).abs();
+            ret = ret + (*px).abs();
             px = px.offset(incx as isize);
         }
     }
-    return stemp;
+    return ret;
 }
 
 

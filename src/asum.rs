@@ -1,72 +1,41 @@
 use crate::{HanInt, c32, c64};
 
 pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
-    #[cfg(target_arch = "x86_64")]
     unsafe {
-        #[cfg(not(feature = "multi_thread"))]
+        #[cfg(feature = "dynamic_arch")]
         {
-            #[cfg(feature = "avx2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_avx(n, x, incx);
+            #[cfg(target_arch = "x86_64")]
+            {
+                #[cfg(not(feature = "thread"))]
+                {
+                    #[cfg(target_feature = "avx")]
+                    return crate::kernel::x86_64::asum::sasum_x86_64_avx(n, x, incx);
 
-            #[cfg(feature = "avx")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_avx(n, x, incx);
+                    #[cfg(target_feature = "sse")]
+                    return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x.as_ptr(), incx);
+                }
 
-            #[cfg(feature = "sse4_2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
+                #[cfg(feature = "thread")]
+                {
+                    #[cfg(target_feature = "avx")]
+                    return crate::kernel::x86_64::asum::sasum_x86_64_mt_avx(n, x, incx);
 
-            #[cfg(feature = "sse4_1")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
+                    #[cfg(target_feature = "sse")]
+                    return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
+                }
+            }
 
-            #[cfg(feature = "ssse3")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
-
-            #[cfg(feature = "sse3")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
-
-            #[cfg(feature = "sse2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
-
-            #[cfg(feature = "sse")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x, incx);
+            #[cfg(target_arch = "x86")]
+            {
+                #[cfg(target_feature = "avx2")]
+                return crate::kernel::x86::asum::sasum_x86_avx2(n, x, incx);
+            }
         }
-
-        #[cfg(feature = "multi_thread")]
+        #[cfg(not(feature = "dynamic_arch"))]
         {
-            #[cfg(feature = "avx2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_avx(n, x, incx);
-
-            #[cfg(feature = "avx")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_avx(n, x, incx);
-
-            #[cfg(feature = "sse4_2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
-
-            #[cfg(feature = "sse4_1")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
-
-            #[cfg(feature = "ssse3")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
-
-            #[cfg(feature = "sse3")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
-
-            #[cfg(feature = "sse2")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
-
-            #[cfg(feature = "sse")]
-            return crate::kernel::x86_64::asum::sasum_x86_64_mt_sse(n, x, incx);
+            return crate::kernel::generic::asum::sasum_generic(n, x.as_ptr(), incx);
         }
-    }
-
-    #[cfg(target_arch = "x86")]
-    unsafe {
-        #[cfg(feature = "avx2")]
-        return crate::kernel::x86::asum::sasum_x86_avx2(n, x, incx);
-    }
-
-    unsafe {
-        // return crate::kernel::generic::asum::sasum_generic(n, x.as_ptr(), incx);
-        return sasum_always_correct(n, x, incx);
+        // return sasum_always_correct(n, x, incx);
     }
 }
 
