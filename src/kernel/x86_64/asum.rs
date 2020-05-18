@@ -134,40 +134,49 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
 
             xorps %xmm0, %xmm0
             xorps %xmm1, %xmm1
-            xorps %xmm3, %xmm2
+            xorps %xmm2, %xmm2
             xorps %xmm3, %xmm3
 
-            cmp $1, $2
-            jle sum_all
-            loop:
-            movaps ($1), %xmm4
-            movaps 16($1), %xmm5
-            movaps 32($1), %xmm6
-            movaps 48($1), %xmm7
+            movq $1, %rax
+
+            cmp %rax, $2
+            jle sasum_x86_64_sse_inc1_sum_all
+            sasum_x86_64_sse_inc1_loop:
+            movaps (%rax), %xmm4
+            movaps 16(%rax), %xmm5
+            movaps 32(%rax), %xmm6
+            movaps 48(%rax), %xmm7
 
             andps %xmm15, %xmm4
             addps %xmm4, %xmm0
+
             andps %xmm15, %xmm5
             addps %xmm5, %xmm1
+
             andps %xmm15, %xmm6
             addps %xmm6, %xmm2
+            
             andps %xmm15, %xmm7
             addps %xmm7, %xmm3
 
-            add $$64, $1
-            cmp $1, $2
-            ja loop
+            addq $$64, %rax
+            cmp %rax, $2
+            ja sasum_x86_64_sse_inc1_loop
             
-            sum_all:
+            sasum_x86_64_sse_inc1_sum_all:
             addps %xmm1, %xmm0
             addps %xmm3, %xmm2
             addps %xmm2, %xmm0
             movups %xmm0, $0
+
+            movq %rax, $1
             "
-            : "=*m"(temp_array.as_mut_ptr()), "+r"(px)
-            : "r"(px_right_align)
-            : "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm15"
+            : "=*m"(temp_array.as_mut_ptr()), "=r"(px)
+            : "m"(px_right_align), "1"(px)
+            : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm15"
         );
+
+        // println!("{:?}", temp_array);
 
         // store and cum
         for value in temp_array.iter() {
@@ -181,10 +190,93 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         }
     } else {
         let mut px = x;
-        for _ in 0..n {
+        let px_end = x.offset((n * incx) as isize);
+        let m = n % 8;
+        let px_left_unroll = px.add((m * incx) as usize);
+
+        while px < px_left_unroll {
+            if px >= px_end {
+                return ret;
+            }
             ret = ret + (*px).abs();
             px = px.offset(incx as isize);
         }
+
+        let mut sum:f32 = 0.0f32;
+        asm!("
+            pcmpeqb %xmm15, %xmm15
+            psrld $$1, %xmm15
+
+            xorps %xmm0, %xmm0
+            xorps %xmm1, %xmm1
+            xorps %xmm2, %xmm2
+            xorps %xmm3, %xmm3
+
+            movq $1, %rax
+
+            cmp %rax, $2
+            jle sasum_x86_64_sse_incx_sum_all
+            sasum_x86_64_sse_incx_loop:
+
+            # load data from memory to xmm4-7, then abs and sum.
+            movss (%rax), %xmm4
+            addq $3, %rax
+            andps %xmm15, %xmm4
+            addss %xmm4, %xmm0
+
+            movss (%rax), %xmm5
+            addq $3, %rax
+            andps %xmm15, %xmm5
+            addss %xmm5, %xmm1
+
+            movss (%rax), %xmm6
+            addq $3, %rax
+            andps %xmm15, %xmm6
+            addss %xmm6, %xmm2
+
+            movss (%rax), %xmm7
+            addq $3, %rax
+            andps %xmm15, %xmm7
+            addss %xmm7, %xmm3
+
+            movss (%rax), %xmm4
+            addq $3, %rax
+            andps %xmm15, %xmm4
+            addss %xmm4, %xmm0
+
+            movss (%rax), %xmm5
+            addq $3, %rax
+            andps %xmm15, %xmm5
+            addss %xmm5, %xmm1
+
+            movss (%rax), %xmm6
+            addq $3, %rax
+            andps %xmm15, %xmm6
+            addss %xmm6, %xmm2
+
+            movss (%rax), %xmm7
+            addq $3, %rax
+            andps %xmm15, %xmm7
+            addss %xmm7, %xmm3
+            
+            cmp %rax, $2
+            ja sasum_x86_64_sse_incx_loop
+            
+            sasum_x86_64_sse_incx_sum_all:
+            addss %xmm1, %xmm0
+            addss %xmm3, %xmm2
+            addss %xmm2, %xmm0
+            movss %xmm0, $0
+
+            movq %rax, $1
+            "
+            : "=*m"(&mut sum as *mut f32), "=r"(px)
+            : "m"(px_end), "r"(incx as usize * std::mem::size_of::<f32>()), "1"(px)
+            : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4",
+                "xmm5", "xmm6", "xmm7", "xmm15"
+        );
+        // println!("{:?}", sum);
+        ret = ret + sum;
     }
     return ret;
 }

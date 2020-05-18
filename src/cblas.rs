@@ -2,30 +2,36 @@
 use crate::HanInt;
 use crate::asum;
 
-type CBLAS_INDEX = usize;
+#[allow(non_camel_case_types)]
+pub type CBLAS_INDEX = usize;
 
-enum CBLAS_ORDER {
+#[allow(non_camel_case_types)]
+pub enum CBLAS_ORDER {
     CblasRowMajor = 101,
     CblasColMajor = 102,
 }
 
-enum CBLAS_TRANSPOSE {
+#[allow(non_camel_case_types)]
+pub enum CBLAS_TRANSPOSE {
     CblasNoTrans = 111,
     CblasTrans = 112,
     CblasConjTrans = 113,
 }
 
-enum CBLAS_UPLO {
+#[allow(non_camel_case_types)]
+pub enum CBLAS_UPLO {
     CblasUpper = 121,
     CblasLower = 122,
 }
 
+#[allow(non_camel_case_types)]
 enum CBLAS_DIAG {
     CblasNonUnit = 131,
     CblasUnit = 132,
 }
 
-enum CBLAS_SIDE {
+#[allow(non_camel_case_types)]
+pub enum CBLAS_SIDE {
     CblasLeft = 141,
     CblasRight = 142,
 }

@@ -47,7 +47,7 @@ mod tests {
     }
 
     #[test]
-    fn test_sasum_1() {
+    fn test_sasum_incx() {
         let mut rng = rand::thread_rng();
         let mut sx = Vec::with_capacity(65536);
         for _i in 0..65536 {
@@ -56,18 +56,17 @@ mod tests {
 
         let result = super::asum::sasum(1001, &sx[..3001], 3);
         let result_correct = super::asum::sasum_always_correct(1001, &sx[..3001], 3);
+        println!("{:?}, {:?}", result, result_correct);
         assert!((result - result_correct).abs() < f32_epsilon);
     }
 
     #[test]
-    fn test_sasum_2() {
+    fn test_sasum_inc1() {
         let mut rng = rand::thread_rng();
         let mut sx = Vec::with_capacity(65536);
         for _i in 0..65536 {
             sx.push(rng.gen::<f32>());
         }
-
-        println!("{:?}", &sx[..1001]);
 
         let result = super::asum::sasum(1001, &sx, 1);
         let result_correct = super::asum::sasum_always_correct(1001, &sx, 1);
