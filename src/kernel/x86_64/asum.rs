@@ -128,7 +128,6 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         }
 
         let mut temp_array:[f32;4] = [0.0f32;4];
-        println!("{:?}", temp_array);
         asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15

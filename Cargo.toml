@@ -1,8 +1,12 @@
 [package]
 name = "hanblas"
-version = "0.1.0"
-authors = ["JasonWang <1103870790@qq.com>"]
+version = "0.0.1"
+authors = ["JunWang <jstzwj@aliyun.com>"]
 edition = "2018"
+license = "MIT"
+description = "A BLAS written in Rust"
+repository = "https://github.com/jstzwj/HanBLAS/"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,6 +15,7 @@ name = "hanblas"
 path = "src/lib.rs"
 
 [features]
+naive = []
 dynamic_arch = []
 api_cblas = []
 api_lapack = []
@@ -23,8 +28,8 @@ name = "temp_test"
 path = "examples/temp_test.rs"
 
 [[bin]]
-name = "benchmark_asum"
-path = "examples/benchmark_asum.rs"
+name = "benchmark_sasum"
+path = "examples/benchmark_sasum.rs"
 
 
 [[bin]]

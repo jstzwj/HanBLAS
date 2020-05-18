@@ -1,6 +1,11 @@
 use crate::{HanInt, c32, c64};
 
 pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
+    // check array length first
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    #[cfg(feature = "naive")]
+    return sasum_always_correct(n, x, incx);
+
     unsafe {
         #[cfg(feature = "dynamic_arch")]
         {
@@ -40,7 +45,6 @@ pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
 }
 
 pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
-    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
     let mut stemp = 0.0e0f32;
     if n <= 0 || incx <= 0 {
         return stemp;

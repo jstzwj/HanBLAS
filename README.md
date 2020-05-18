@@ -4,6 +4,19 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 
 
 
+## Usage
+
+### Use in Rust
+
+
+
+### Use by CBLAS API
+
+
+
+
+
+
 ## Supported functions
 
 ### level1
@@ -26,7 +39,7 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 
 
 
-## performance
+## Performance
 
 
 
