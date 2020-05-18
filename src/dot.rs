@@ -25,8 +25,8 @@ pub fn sdot_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: 
                 + x[i+3]*y[i+3];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }
@@ -68,8 +68,8 @@ pub fn ddot_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: 
                 + x[i+3]*y[i+3];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }

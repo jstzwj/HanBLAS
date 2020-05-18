@@ -13,8 +13,8 @@ pub fn cdotu_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy:
             ret = ret + cconjg(x[i])*y[i];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }
@@ -41,8 +41,8 @@ pub fn zdotu_always_correct(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy:
             ret = ret + zconjg(x[i])*y[i];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }

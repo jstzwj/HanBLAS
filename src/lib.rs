@@ -40,6 +40,7 @@ mod tests {
     use rand::Rng;
 
     const f32_epsilon: f32 = 0.1;
+    const f64_epsilon: f64 = 0.1;
 
     #[test]
     fn it_works() {
@@ -72,6 +73,34 @@ mod tests {
         let result_correct = super::asum::sasum_always_correct(1001, &sx, 1);
         println!("{:?}, {:?}", result, result_correct);
         assert!((result - result_correct).abs() < f32_epsilon);
+    }
+
+    #[test]
+    fn test_dasum_incx() {
+        let mut rng = rand::thread_rng();
+        let mut x = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            x.push(rng.gen::<f64>());
+        }
+
+        let result = super::asum::dasum(1001, &x[..3001], 3);
+        let result_correct = super::asum::dasum_always_correct(1001, &x[..3001], 3);
+        println!("{:?}, {:?}", result, result_correct);
+        assert!((result - result_correct).abs() < f64_epsilon);
+    }
+
+    #[test]
+    fn test_dasum_inc1() {
+        let mut rng = rand::thread_rng();
+        let mut x = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            x.push(rng.gen::<f64>());
+        }
+
+        let result = super::asum::dasum(1001, &x, 1);
+        let result_correct = super::asum::dasum_always_correct(1001, &x, 1);
+        println!("{:?}, {:?}", result, result_correct);
+        assert!((result - result_correct).abs() < f64_epsilon);
     }
 
     #[test]

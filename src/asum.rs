@@ -81,7 +81,7 @@ pub fn dasum(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
 }
 
 pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
-    assert!(x.len() as HanInt == 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
     let mut ret = 0.0e0f64;
     let mut stemp = 0.0e0f64;
     if n <= 0 || incx <= 0 {

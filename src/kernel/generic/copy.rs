@@ -22,8 +22,8 @@ fn scopy_generic(n: i32, x: &[f32], incx: i32, y: &mut [f32], incy: i32) {
             y[i+7] = x[i+7];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }

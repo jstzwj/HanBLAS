@@ -37,8 +37,8 @@ pub fn daxpy_always_correct(
             y[i+3] = y[i+3] + alpha*x[i+3];
         }
     } else {
-        let mut ix = 1;
-        let mut iy = 1;
+        let mut ix = 0;
+        let mut iy = 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }
