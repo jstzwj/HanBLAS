@@ -1,4 +1,5 @@
 #![feature(asm)]
+#![feature(ptr_offset_from)]
 
 pub mod util;
 pub mod kernel;
@@ -38,6 +39,8 @@ pub type c64 = num_complex::Complex<f64>;
 mod tests {
     use rand::Rng;
 
+    const f32_epsilon: f32 = 0.1;
+
     #[test]
     fn it_works() {
         assert_eq!(2 + 2, 4);
@@ -53,7 +56,7 @@ mod tests {
 
         let result = super::asum::sasum(1001, &sx[..3001], 3);
         let result_correct = super::asum::sasum_always_correct(1001, &sx[..3001], 3);
-        assert!((result - result_correct).abs() < 1e-3);
+        assert!((result - result_correct).abs() < f32_epsilon);
     }
 
     #[test]
@@ -64,9 +67,12 @@ mod tests {
             sx.push(rng.gen::<f32>());
         }
 
-        let result = super::asum::sasum(1001, &sx[..1001], 1);
-        let result_correct = super::asum::sasum_always_correct(1001, &sx[..1001], 1);
-        assert!((result - result_correct).abs() < 1e-3);
+        println!("{:?}", &sx[..1001]);
+
+        let result = super::asum::sasum(1001, &sx, 1);
+        let result_correct = super::asum::sasum_always_correct(1001, &sx, 1);
+        println!("{:?}, {:?}", result, result_correct);
+        assert!((result - result_correct).abs() < f32_epsilon);
     }
 
     #[test]
@@ -130,6 +136,6 @@ mod tests {
             &mut c2,
             n as i32
         );
-        assert!((self::super::util::scomparea(&c1, &c2)).abs() < 1e-6);
+        assert!((self::super::util::scomparea(&c1, &c2)).abs() < f32_epsilon);
     }
 }

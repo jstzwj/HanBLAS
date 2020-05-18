@@ -113,23 +113,25 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
 
     if incx == 1 {
         let mut px = x;
+        let offset = px.align_offset(4 * std::mem::align_of::<f32>());
+        let px_left_align = px.add(offset);
         let px_end = x.offset(n as isize);
+        let m = (n - offset as HanInt) % 16;
+        let px_right_align = px_end.sub(m as usize);
 
-        let m = n%16;
-        if m != 0 {
-            for _ in 0..m {
-                ret = ret + (*px).abs();
-                px = px.offset(1);
-            }
-            if n < 16 {
+        while px < px_left_align {
+            if px >= px_end {
                 return ret;
             }
+            ret = ret + (*px).abs();
+            px = px.offset(1);
         }
 
-        let mut temp_array = [0.0f32;4];
+        let mut temp_array:[f32;4] = [0.0f32;4];
+        println!("{:?}", temp_array);
         asm!("
             pcmpeqb %xmm15, %xmm15
-            psrlq $$1, %xmm15
+            psrld $$1, %xmm15
 
             xorps %xmm0, %xmm0
             xorps %xmm1, %xmm1
@@ -139,10 +141,10 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
             cmp $1, $2
             jle sum_all
             loop:
-            movups ($1), %xmm4
-            movups 16($1), %xmm5
-            movups 32($1), %xmm6
-            movups 48($1), %xmm7
+            movaps ($1), %xmm4
+            movaps 16($1), %xmm5
+            movaps 32($1), %xmm6
+            movaps 48($1), %xmm7
 
             andps %xmm15, %xmm4
             addps %xmm4, %xmm0
@@ -161,19 +163,22 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
             addps %xmm1, %xmm0
             addps %xmm3, %xmm2
             addps %xmm2, %xmm0
-            movups %xmm0, ($0)
+            movups %xmm0, $0
             "
-            :
-            : "r"(temp_array.as_mut_ptr()), "r"(px), "r"(px_end)
-            : "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7",
-                "xmm8", "xmm9", "xmm10", "xmm11", "xmm12", "xmm13", "xmm14", "xmm15"
+            : "=*m"(temp_array.as_mut_ptr()), "+r"(px)
+            : "r"(px_right_align)
+            : "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm15"
         );
 
-        // println!("{:?}", temp_array);
-
         // store and cum
-        for i in temp_array.iter() {
-            ret += i;
+        for value in temp_array.iter() {
+            ret += value;
+        }
+
+        // left nums
+        while px < px_end {
+            ret = ret + (*px).abs();
+            px = px.offset(1);
         }
     } else {
         let mut px = x;
