@@ -4,6 +4,7 @@ pub fn srot(n: HanInt, x:&mut[f32], incx:HanInt, y:&mut[f32], incy:HanInt, c:f32
 
 }
 
+#[allow(dead_code)]
 pub fn srot_always_correct(n: HanInt, x:&mut[f32], incx:HanInt, y:&mut[f32], incy:HanInt, c:f32, s:f32) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {

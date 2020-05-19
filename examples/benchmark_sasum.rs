@@ -1,8 +1,8 @@
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 use rand::Rng;
 
 use hanblas::HanInt;
-use blas::*;
+// use blas::*;
 
 fn main() {
     let mut rng = rand::thread_rng();

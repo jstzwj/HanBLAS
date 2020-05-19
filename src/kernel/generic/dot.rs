@@ -1,77 +1,77 @@
 use crate::{HanInt, c32, c64};
 
-pub fn sdot_generic(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f32 {
+pub unsafe fn sdot_generic(n: HanInt, x: *const f32, incx: HanInt, y: *const f32, incy: HanInt) -> f32 {
     let mut ret = 0.0f32;
     if n <= 0 {return ret;}
+    // TODO: if we need negative inc?
+    if incx <= 0 || incy <= 0 {return ret;}
+
+    let mut px = x;
+    let mut py = y;
+    let px_end = x.offset((n * incx) as isize);
+
     if incx == 1 && incy == 1 {
-        let m = n % 4;
-        if m != 0 {
-            for i in 0..m as usize {
-                ret = ret + x[i]*y[i];
-            }
-            if n < 4 {
-                return ret;
-            }
-        }
-        for i in (m as usize..n as usize).step_by(4) {
+        let m = n - n % 4;
+        let px_unroll = px.offset(n as isize);
+        while px < px_unroll {
             ret = ret
-                + x[i]*y[i]
-                + x[i+1]*y[i+1]
-                + x[i+2]*y[i+2]
-                + x[i+3]*y[i+3];
+                + (*px) * (*py)
+                + (*px.offset(1)) * (*py.offset(1))
+                + (*px.offset(2)) * (*py.offset(2))
+                + (*px.offset(3)) * (*py.offset(3));
+            px = px.offset(1);
+            py = py.offset(1);
+        }
+
+        while px < px_end {
+            ret = ret + (*px) * (*py);
+            px = px.offset(1);
+            py = py.offset(1);
         }
     } else {
-        let mut ix = 0;
-        let mut iy = 0;
-        if incx < 0 {
-            ix = (-n+1)*incx + 1;
-        }
-        if incy < 0 {
-            iy = (-n+1)*incy + 1;
-        }
-        for _ in 0..n {
-            ret = ret + x[ix as usize]*y[iy as usize];
-            ix = ix + incx;
-            iy = iy + incy;
+        while px < px_end {
+            ret = ret + (*px) * (*py);
+            px = px.offset(incx as isize);
+            py = py.offset(incy as isize);
         }
     }
     return ret;
 }
 
 
-pub fn ddot_generic(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: HanInt) -> f64 {
+pub unsafe fn ddot_generic(n: HanInt, x: *const f64, incx: HanInt, y: *const f64, incy: HanInt) -> f64 {
     let mut ret = 0.0f64;
     if n <= 0 {return ret;}
+    // TODO: if we need negative inc?
+    if incx <= 0 || incy <= 0 {return ret;}
+
+    let mut px = x;
+    let mut py = y;
+    let px_end = x.offset((n * incx) as isize);
+
     if incx == 1 && incy == 1 {
-        let m = n % 4;
-        if m != 0 {
-            for i in 0..m as usize {
-                ret = ret + x[i]*y[i];
-            }
-            if n < 4 {
-                return ret;
-            }
-        }
-        for i in (m as usize..n as usize).step_by(4) {
+        let m = n - n % 4;
+        let px_unroll = px.offset(n as isize);
+        while px < px_unroll {
             ret = ret
-                + x[i]*y[i]
-                + x[i+1]*y[i+1]
-                + x[i+2]*y[i+2]
-                + x[i+3]*y[i+3];
+                + (*px) * (*py)
+                + (*px.offset(1)) * (*py.offset(1))
+                + (*px.offset(2)) * (*py.offset(2))
+                + (*px.offset(3)) * (*py.offset(3));
+            px = px.offset(1);
+            py = py.offset(1);
+        }
+
+        while px < px_end {
+            ret = ret + (*px) * (*py);
+            px = px.offset(1);
+            py = py.offset(1);
         }
     } else {
-        let mut ix = 0;
-        let mut iy = 0;
-        if incx < 0 {
-            ix = (-n+1)*incx + 1;
-        }
-        if incy < 0 {
-            iy = (-n+1)*incy + 1;
-        }
-        for _ in 0..n {
-            ret = ret + x[ix as usize]*y[iy as usize];
-            ix = ix + incx;
-            iy = iy + incy;
+        while px < px_end {
+            ret = ret + (*px) * (*py);
+            px = px.offset(incx as isize);
+            py = py.offset(incy as isize);
         }
     }
     return ret;

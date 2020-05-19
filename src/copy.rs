@@ -11,6 +11,7 @@ pub fn scopy(n: HanInt, x: &[f32], incx: HanInt, y: &mut [f32], incy: HanInt) {
     }
 }
 
+#[allow(dead_code)]
 fn scopy_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &mut [f32], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {
@@ -50,10 +51,17 @@ fn scopy_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &mut [f32], incy:
 
 
 pub fn dcopy(n: HanInt, x: &[f64], incx: HanInt, y: &mut [f64], incy: HanInt) {
+    // check array length first
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    assert!(y.len() as HanInt >= 1 + (n-1)*incy.abs(), "the dimension of y should greater than 1+(n-1)*abs(incy)");
+    #[cfg(feature = "naive")]
     return dcopy_always_correct(n, x, incx, y, incy);
+    unsafe {
+        return crate::kernel::generic::copy::dcopy_generic(n, x.as_ptr(), incx, y.as_mut_ptr(), incy);
+    }
 }
 
-
+#[allow(dead_code)]
 fn dcopy_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &mut [f64], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {

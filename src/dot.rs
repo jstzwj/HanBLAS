@@ -1,7 +1,14 @@
 use self::super::{HanInt, c32, c64};
 
 pub fn sdot(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f32 {
+    // check array length first
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    assert!(y.len() as HanInt >= 1 + (n-1)*incy.abs(), "the dimension of y should greater than 1+(n-1)*abs(incy)");
+    #[cfg(feature = "naive")]
     return sdot_always_correct(n, x, incx, y, incy);
+    unsafe {
+        return crate::kernel::generic::dot::sdot_generic(n, x.as_ptr(), incx, y.as_ptr(), incy);
+    }
 }
 
 pub fn sdot_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f32 {
@@ -44,7 +51,14 @@ pub fn sdot_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: 
 
 
 pub fn ddot(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: HanInt) -> f64 {
-    return 0.0;
+    // check array length first
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    assert!(y.len() as HanInt >= 1 + (n-1)*incy.abs(), "the dimension of y should greater than 1+(n-1)*abs(incy)");
+    #[cfg(feature = "naive")]
+    return ddot_always_correct(n, x, incx, y, incy);
+    unsafe {
+        return crate::kernel::generic::dot::ddot_generic(n, x.as_ptr(), incx, y.as_ptr(), incy);
+    }
 }
 
 pub fn ddot_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: HanInt) -> f64 {

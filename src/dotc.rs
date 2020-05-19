@@ -5,6 +5,7 @@ pub fn cdotu(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy: HanInt) -> c32
     return c32::new(0.0, 0.0);
 }
 
+#[allow(dead_code)]
 pub fn cdotu_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy: HanInt) -> c32 {
     let mut ret = c32::new(0.0, 0.0);
     if n <= 0 {return ret;}
@@ -33,6 +34,7 @@ pub fn zdotu(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy: HanInt) -> c64
     return c64::new(0.0, 0.0);
 }
 
+#[allow(dead_code)]
 pub fn zdotu_always_correct(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy: HanInt) -> c64 {
     let mut ret = c64::new(0.0, 0.0);
     if n <= 0 {return ret;}

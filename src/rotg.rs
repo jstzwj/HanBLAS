@@ -3,6 +3,7 @@ use super::util::sign;
 pub fn srotg(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {
 }
 
+#[allow(dead_code)]
 pub fn srotg_always_correct(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {
     let mut roe: f32 = *b;
     if a.abs() > b.abs() {
@@ -37,6 +38,7 @@ pub fn srotg_always_correct(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) 
 pub fn drotg(a: &mut f64, b: &mut f64, c: &mut f64, s: &mut f64) {
 }
 
+#[allow(dead_code)]
 pub fn drotg_always_correct(a: &mut f64, b: &mut f64, c: &mut f64, s: &mut f64) {
     let mut roe: f64 = *b;
     if a.abs() > b.abs() {

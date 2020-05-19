@@ -156,3 +156,65 @@ pub fn dzasum_always_correct(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
     }
     return dtemp;
 }
+
+
+#[cfg(test)]
+mod tests {
+    use rand::Rng;
+
+    #[test]
+    fn test_sasum_incx() {
+        let mut rng = rand::thread_rng();
+        let mut sx = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            sx.push(rng.gen::<f32>());
+        }
+
+        let result = crate::asum::sasum(1001, &sx[..3001], 3);
+        let result_correct = crate::asum::sasum_always_correct(1001, &sx[..3001], 3);
+        // println!("{:?}, {:?}", result, result_correct);
+        assert!(((result - result_correct).abs() as f64) < crate::TEST_EPSILON);
+    }
+
+    #[test]
+    fn test_sasum_inc1() {
+        let mut rng = rand::thread_rng();
+        let mut sx = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            sx.push(rng.gen::<f32>());
+        }
+
+        let result = crate::asum::sasum(1001, &sx, 1);
+        let result_correct = crate::asum::sasum_always_correct(1001, &sx, 1);
+        // println!("{:?}, {:?}", result, result_correct);
+        assert!(((result - result_correct).abs() as f64) < crate::TEST_EPSILON);
+    }
+
+    #[test]
+    fn test_dasum_incx() {
+        let mut rng = rand::thread_rng();
+        let mut x = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            x.push(rng.gen::<f64>());
+        }
+
+        let result = crate::asum::dasum(1001, &x[..3001], 3);
+        let result_correct = crate::asum::dasum_always_correct(1001, &x[..3001], 3);
+        println!("{:?}, {:?}", result, result_correct);
+        assert!(((result - result_correct).abs() as f64) < crate::TEST_EPSILON);
+    }
+
+    #[test]
+    fn test_dasum_inc1() {
+        let mut rng = rand::thread_rng();
+        let mut x = Vec::with_capacity(65536);
+        for _i in 0..65536 {
+            x.push(rng.gen::<f64>());
+        }
+
+        let result = crate::asum::dasum(1001, &x, 1);
+        let result_correct = crate::asum::dasum_always_correct(1001, &x, 1);
+        println!("{:?}, {:?}", result, result_correct);
+        assert!((result - result_correct).abs() < crate::TEST_EPSILON);
+    }
+}
