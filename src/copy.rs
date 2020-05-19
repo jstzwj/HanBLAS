@@ -1,10 +1,17 @@
-use self::super::{c32, c64};
+use crate::{HanInt, c32, c64};
 
-pub fn scopy(n: i32, x: &[f32], incx: i32, y: &mut [f32], incy: i32) {
+pub fn scopy(n: HanInt, x: &[f32], incx: HanInt, y: &mut [f32], incy: HanInt) {
+    // check array length first
+    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    assert!(y.len() as HanInt >= 1 + (n-1)*incy.abs(), "the dimension of y should greater than 1+(n-1)*abs(incy)");
+    #[cfg(feature = "naive")]
     return scopy_always_correct(n, x, incx, y, incy);
+    unsafe {
+        return crate::kernel::generic::copy::scopy_generic(n, x.as_ptr(), incx, y.as_mut_ptr(), incy);
+    }
 }
 
-fn scopy_always_correct(n: i32, x: &[f32], incx: i32, y: &mut [f32], incy: i32) {
+fn scopy_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &mut [f32], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {
         let m = n % 8;
@@ -42,12 +49,12 @@ fn scopy_always_correct(n: i32, x: &[f32], incx: i32, y: &mut [f32], incy: i32) 
 }
 
 
-pub fn dcopy(n: i32, x: &[f64], incx: i32, y: &mut [f64], incy: i32) {
+pub fn dcopy(n: HanInt, x: &[f64], incx: HanInt, y: &mut [f64], incy: HanInt) {
     return dcopy_always_correct(n, x, incx, y, incy);
 }
 
 
-fn dcopy_always_correct(n: i32, x: &[f64], incx: i32, y: &mut [f64], incy: i32) {
+fn dcopy_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &mut [f64], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {
         let m = n % 8;
@@ -85,11 +92,11 @@ fn dcopy_always_correct(n: i32, x: &[f64], incx: i32, y: &mut [f64], incy: i32) 
 }
 
 
-pub fn ccopy(n: i32, x: &[c32], incx: i32, y: &mut [c32], incy: i32) {
+pub fn ccopy(n: HanInt, x: &[c32], incx: HanInt, y: &mut [c32], incy: HanInt) {
     
 }
 
-pub fn ccopy_always_correct(n: i32, x: &[c32], incx: i32, y: &mut [c32], incy: i32) {
+pub fn ccopy_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &mut [c32], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {
         for i in 0..n as usize {
@@ -113,12 +120,12 @@ pub fn ccopy_always_correct(n: i32, x: &[c32], incx: i32, y: &mut [c32], incy: i
 }
 
 
-pub fn zcopy(n: i32, x: &[c64], incx: i32, y: &mut [c64], incy: i32) {
+pub fn zcopy(n: HanInt, x: &[c64], incx: HanInt, y: &mut [c64], incy: HanInt) {
 
 }
 
 
-pub fn zcopy_always_correct(n: i32, x: &[c64], incx: i32, y: &mut [c64], incy: i32) {
+pub fn zcopy_always_correct(n: HanInt, x: &[c64], incx: HanInt, y: &mut [c64], incy: HanInt) {
     if n <= 0 { return; }
     if incx == 1 && incy == 1 {
         for i in 0..n as usize {

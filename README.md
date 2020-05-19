@@ -20,6 +20,7 @@ HanBLAS is a toy BLAS library implemented in rust.(WIP)
 ## Supported functions
 
 ### level1
+- sswap, dswap, cswap, zswap
 - sasum, dasum, scasum, dzasum
 - sdot, ddot, dsdot
 - cdotu, zdotu
