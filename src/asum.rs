@@ -1,5 +1,6 @@
 use crate::{c32, c64, HanInt};
 
+#[allow(unreachable_code)]
 pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
     // check array length first
     assert!(
@@ -17,7 +18,7 @@ pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
                 #[cfg(not(feature = "thread"))]
                 {
                     #[cfg(target_feature = "avx")]
-                    return crate::kernel::x86_64::asum::sasum_x86_64_avx(n, x, incx);
+                    return crate::kernel::x86_64::asum::sasum_x86_64_avx(n, x.as_ptr(), incx);
 
                     #[cfg(target_feature = "sse")]
                     return crate::kernel::x86_64::asum::sasum_x86_64_sse(n, x.as_ptr(), incx);
