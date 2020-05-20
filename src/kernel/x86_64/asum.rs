@@ -1,4 +1,3 @@
-
 use rayon::prelude::*;
 
 #[cfg(target_arch = "x86_64")]
@@ -15,7 +14,7 @@ pub unsafe fn sasum_x86_64_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
         return result;
     }
     if incx == 1 {
-        let m = n%8;
+        let m = n % 8;
         if m != 0 {
             for i in 0..m {
                 result = result + sx[i as usize].abs();
@@ -30,9 +29,9 @@ pub unsafe fn sasum_x86_64_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
             let sx_slice = std::arch::x86_64::_mm256_loadu_ps(sx.as_ptr().add(i));
             temp = std::arch::x86_64::_mm256_add_ps(temp, sx_slice);
         }
-        
+
         // store and cum
-        let mut temp_array = [0.0f32;8];
+        let mut temp_array = [0.0f32; 8];
         std::arch::x86_64::_mm256_storeu_ps(temp_array.as_mut_ptr(), temp);
         for i in temp_array.iter() {
             result += i;
@@ -46,12 +45,11 @@ pub unsafe fn sasum_x86_64_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
     return result;
 }
 
-
 #[cfg(all(any(target_feature = "avx"), feature = "thread"))]
 #[target_feature(enable = "avx")]
 pub unsafe fn sasum_x86_64_mt_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
     // small size disable mt
-    if 1 + (n-1)*incx.abs() < 500000 {
+    if 1 + (n - 1) * incx.abs() < 500000 {
         return sasum_x86_64_avx(n, sx, incx);
     }
 
@@ -63,8 +61,8 @@ pub unsafe fn sasum_x86_64_mt_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
 
     if incx == 1 {
         let chunk_size = 64 * 1024 / 4;
-        let m = n%chunk_size;
-        
+        let m = n % chunk_size;
+
         if m != 0 {
             for i in 0..m {
                 result = result + sx[i as usize].abs();
@@ -73,7 +71,7 @@ pub unsafe fn sasum_x86_64_mt_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
                 return result;
             }
         }
-        
+
         let temps: Vec<_> = sx[m as usize..]
             .par_chunks(chunk_size as usize)
             .map(|chunk| {
@@ -87,7 +85,7 @@ pub unsafe fn sasum_x86_64_mt_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
             .collect();
 
         // store and cum
-        let mut temp_array = [0.0f32;8];
+        let mut temp_array = [0.0f32; 8];
         for each_temp in temps.iter() {
             std::arch::x86_64::_mm256_storeu_ps(temp_array.as_mut_ptr(), *each_temp);
             for i in temp_array.iter() {
@@ -101,7 +99,6 @@ pub unsafe fn sasum_x86_64_mt_avx(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
     }
     return result;
 }
-
 
 #[cfg(target_feature = "sse")]
 #[target_feature(enable = "sse")]
@@ -127,7 +124,7 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
             px = px.offset(1);
         }
 
-        let mut temp_array:[f32;4] = [0.0f32;4];
+        let mut temp_array: [f32; 4] = [0.0f32; 4];
         asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15
@@ -202,7 +199,7 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
             px = px.offset(incx as isize);
         }
 
-        let mut sum:f32 = 0.0f32;
+        let mut sum: f32 = 0.0f32;
         asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15
@@ -281,14 +278,11 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
     return ret;
 }
 
-
-#[cfg(
-    all(target_feature = "sse", feature = "thread")
-)]
+#[cfg(all(target_feature = "sse", feature = "thread"))]
 #[target_feature(enable = "sse")]
 pub unsafe fn sasum_x86_64_mt_sse(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
     // small size disable mt
-    if 1 + (n-1)*incx.abs() < 100000 {
+    if 1 + (n - 1) * incx.abs() < 100000 {
         return sasum_x86_64_sse(n, sx, incx);
     }
 
@@ -300,8 +294,8 @@ pub unsafe fn sasum_x86_64_mt_sse(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
 
     if incx == 1 {
         let chunk_size = 64 * 1024 / 4;
-        let m = n%chunk_size;
-        
+        let m = n % chunk_size;
+
         if m != 0 {
             for i in 0..m {
                 result = result + sx[i as usize].abs();
@@ -310,7 +304,7 @@ pub unsafe fn sasum_x86_64_mt_sse(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
                 return result;
             }
         }
-        
+
         let temps: Vec<_> = sx[m as usize..]
             .par_chunks(chunk_size as usize)
             .map(|chunk| {
@@ -324,7 +318,7 @@ pub unsafe fn sasum_x86_64_mt_sse(n: HanInt, sx: &[f32], incx: HanInt) -> f32 {
             .collect();
 
         // store and cum
-        let mut temp_array = [0.0f32;4];
+        let mut temp_array = [0.0f32; 4];
         for each_temp in temps.iter() {
             std::arch::x86_64::_mm_storeu_ps(temp_array.as_mut_ptr(), *each_temp);
             for i in temp_array.iter() {

@@ -1,6 +1,5 @@
-
-use crate::HanInt;
 use crate::asum;
+use crate::HanInt;
 
 #[allow(non_camel_case_types)]
 pub type CBLAS_INDEX = usize;
@@ -41,8 +40,8 @@ pub extern "C" fn cblas_sasum(n: i32, sx: *const f32, incx: i32) -> f32 {
     unsafe {
         return asum::sasum(
             n as HanInt,
-            std::slice::from_raw_parts(sx, (1 + (n-1)*incx.abs())as usize),
-            incx as HanInt
+            std::slice::from_raw_parts(sx, (1 + (n - 1) * incx.abs()) as usize),
+            incx as HanInt,
         );
     }
 }

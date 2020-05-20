@@ -1,10 +1,20 @@
-use crate::{HanInt, c32, c64};
+use crate::{c32, c64, HanInt};
 
-pub unsafe fn sdot_generic(n: HanInt, x: *const f32, incx: HanInt, y: *const f32, incy: HanInt) -> f32 {
+pub unsafe fn sdot_generic(
+    n: HanInt,
+    x: *const f32,
+    incx: HanInt,
+    y: *const f32,
+    incy: HanInt,
+) -> f32 {
     let mut ret = 0.0f32;
-    if n <= 0 {return ret;}
+    if n <= 0 {
+        return ret;
+    }
     // TODO: if we need negative inc?
-    if incx <= 0 || incy <= 0 {return ret;}
+    if incx <= 0 || incy <= 0 {
+        return ret;
+    }
 
     let mut px = x;
     let mut py = y;
@@ -38,12 +48,21 @@ pub unsafe fn sdot_generic(n: HanInt, x: *const f32, incx: HanInt, y: *const f32
     return ret;
 }
 
-
-pub unsafe fn ddot_generic(n: HanInt, x: *const f64, incx: HanInt, y: *const f64, incy: HanInt) -> f64 {
+pub unsafe fn ddot_generic(
+    n: HanInt,
+    x: *const f64,
+    incx: HanInt,
+    y: *const f64,
+    incy: HanInt,
+) -> f64 {
     let mut ret = 0.0f64;
-    if n <= 0 {return ret;}
+    if n <= 0 {
+        return ret;
+    }
     // TODO: if we need negative inc?
-    if incx <= 0 || incy <= 0 {return ret;}
+    if incx <= 0 || incy <= 0 {
+        return ret;
+    }
 
     let mut px = x;
     let mut py = y;

@@ -1,10 +1,13 @@
-use crate::{HanInt, c32, c64};
-
+use crate::{c32, c64, HanInt};
 
 pub unsafe fn scopy_generic(n: HanInt, x: *const f32, incx: HanInt, y: *mut f32, incy: HanInt) {
-    if n <= 0 {return;}
+    if n <= 0 {
+        return;
+    }
     // TODO: if we need negative inc?
-    if incx <= 0 || incy <= 0 {return;}
+    if incx <= 0 || incy <= 0 {
+        return;
+    }
     let mut px = x;
     let mut py = y;
     let px_end = x.offset((n * incx) as isize);
@@ -34,11 +37,14 @@ pub unsafe fn scopy_generic(n: HanInt, x: *const f32, incx: HanInt, y: *mut f32,
     }
 }
 
-
 pub unsafe fn dcopy_generic(n: HanInt, x: *const f64, incx: HanInt, y: *mut f64, incy: HanInt) {
-    if n <= 0 {return;}
+    if n <= 0 {
+        return;
+    }
     // TODO: if we need negative inc?
-    if incx <= 0 || incy <= 0 {return;}
+    if incx <= 0 || incy <= 0 {
+        return;
+    }
     let mut px = x;
     let mut py = y;
     let px_end = x.offset((n * incx) as isize);

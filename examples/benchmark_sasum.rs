@@ -1,5 +1,5 @@
-use std::time::{Instant};
 use rand::Rng;
+use std::time::Instant;
 
 use hanblas::HanInt;
 // use blas::*;
@@ -9,7 +9,8 @@ fn main() {
     let test_num = 20;
     let mut wtr = csv::Writer::from_path("asum.csv").unwrap();
 
-    wtr.write_record(&["size", "GFLOPS_contiguous", "GFLOPS_inc"]).unwrap();
+    wtr.write_record(&["size", "GFLOPS_contiguous", "GFLOPS_inc"])
+        .unwrap();
 
     let mut size = 10000;
     while size < 1000000000 {
@@ -22,7 +23,7 @@ fn main() {
 
         let mut times1 = Vec::new();
         let mut times2 = Vec::new();
-    
+
         for _ in 0..test_num {
             {
                 let now = Instant::now();
@@ -30,10 +31,10 @@ fn main() {
                 // unsafe { blas::sasum(size as i32, &sx, 1); }
                 times1.push(now.elapsed().as_nanos());
             }
-            
+
             {
                 let now = Instant::now();
-                hanblas::asum::sasum((size/2) as HanInt, &sx, 2);
+                hanblas::asum::sasum((size / 2) as HanInt, &sx, 2);
                 // unsafe { blas::sasum((size/2) as i32, &sx, 2);}
                 times2.push(now.elapsed().as_nanos());
             }
@@ -43,12 +44,13 @@ fn main() {
         let min_time2 = times2.iter().min().unwrap();
         let min_time_sec2 = (*min_time2 as f32) / 1e9;
         println!("{}, {}", min_time_sec1, min_time_sec2);
-        
+
         wtr.write_record(&[
             size.to_string(),
-            (gflops/min_time_sec1).to_string(),
-            (gflops/min_time_sec2).to_string()
-            ]).unwrap();
+            (gflops / min_time_sec1).to_string(),
+            (gflops / min_time_sec2).to_string(),
+        ])
+        .unwrap();
         println!("{}", size);
 
         size += 10i32.pow((size as f32).log10() as u32) as usize + 1;

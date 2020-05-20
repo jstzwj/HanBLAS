@@ -1,5 +1,5 @@
-use std::time::{Instant};
 use rand::Rng;
+use std::time::Instant;
 
 fn main() {
     // let nflops_per_cycle = 4;
@@ -38,7 +38,7 @@ fn main() {
                 c.push(rng.gen::<f32>());
             }
         }
-        
+
         let mut times = Vec::new();
         for _ in 0..test_num {
             let now = Instant::now();
@@ -55,18 +55,18 @@ fn main() {
                 size as i32,
                 0.0,
                 &mut c,
-                size as i32
+                size as i32,
             );
             let time = now.elapsed().as_nanos();
             times.push(time);
         }
-        
+
         let min_time = times.iter().min().unwrap();
         let min_time_sec = (*min_time as f32) / 1e9;
-        wtr.write_record(&[size.to_string(), (gflops/min_time_sec).to_string()]).unwrap();
+        wtr.write_record(&[size.to_string(), (gflops / min_time_sec).to_string()])
+            .unwrap();
 
         // size += 10i32.pow((size as f32).log10() as u32) as usize + 1;
     }
     wtr.flush().unwrap();
-    
 }

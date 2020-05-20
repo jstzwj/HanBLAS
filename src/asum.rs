@@ -1,8 +1,11 @@
-use crate::{HanInt, c32, c64};
+use crate::{c32, c64, HanInt};
 
 pub fn sasum(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
     // check array length first
-    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x should greater than 1+(n-1)*abs(incx)");
+    assert!(
+        x.len() as HanInt >= 1 + (n - 1) * incx.abs(),
+        "the dimension of x should greater than 1+(n-1)*abs(incx)"
+    );
     #[cfg(feature = "naive")]
     return sasum_always_correct(n, x, incx);
 
@@ -50,7 +53,7 @@ pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
         return stemp;
     }
     if incx == 1 {
-        let m = n%8;
+        let m = n % 8;
         if m != 0 {
             for i in 0..m {
                 stemp = stemp + x[i as usize].abs();
@@ -60,13 +63,18 @@ pub fn sasum_always_correct(n: HanInt, x: &[f32], incx: HanInt) -> f32 {
             }
         }
         for i in (m as usize..n as usize).step_by(8) {
-            stemp = stemp + x[i].abs() + x[i + 1].abs() +
-                x[i + 2].abs() + x[i + 3].abs() +
-                x[i + 4].abs() + x[i + 5].abs() +
-                x[i + 6].abs() + x[i + 7].abs();
+            stemp = stemp
+                + x[i].abs()
+                + x[i + 1].abs()
+                + x[i + 2].abs()
+                + x[i + 3].abs()
+                + x[i + 4].abs()
+                + x[i + 5].abs()
+                + x[i + 6].abs()
+                + x[i + 7].abs();
         }
     } else {
-        let nincx = n*incx;
+        let nincx = n * incx;
         for i in (0..nincx as usize).step_by(incx as usize) {
             stemp = stemp + x[i].abs();
         }
@@ -81,14 +89,17 @@ pub fn dasum(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
 }
 
 pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
-    assert!(x.len() as HanInt >= 1 + (n-1)*incx.abs(), "the dimension of x is not 1+(n-1)*abs(incx)");
+    assert!(
+        x.len() as HanInt >= 1 + (n - 1) * incx.abs(),
+        "the dimension of x is not 1+(n-1)*abs(incx)"
+    );
     let mut ret = 0.0e0f64;
     let mut stemp = 0.0e0f64;
     if n <= 0 || incx <= 0 {
         return ret;
     }
     if incx == 1 {
-        let m = n%6;
+        let m = n % 6;
         if m != 0 {
             for i in 0..m {
                 stemp = stemp + x[i as usize].abs();
@@ -99,12 +110,16 @@ pub fn dasum_always_correct(n: HanInt, x: &[f64], incx: HanInt) -> f64 {
             }
         }
         for i in (m..n).step_by(6) {
-            stemp = stemp + x[i as usize].abs() + x[i as usize + 1].abs() +
-                x[i as usize + 2].abs() + x[i as usize + 3].abs() +
-                x[i as usize + 4].abs() + x[i as usize + 5].abs();
+            stemp = stemp
+                + x[i as usize].abs()
+                + x[i as usize + 1].abs()
+                + x[i as usize + 2].abs()
+                + x[i as usize + 3].abs()
+                + x[i as usize + 4].abs()
+                + x[i as usize + 5].abs();
         }
     } else {
-        let nincx = n*incx;
+        let nincx = n * incx;
         for i in (0..nincx).step_by(incx as usize) {
             stemp = stemp + x[i as usize].abs();
         }
@@ -121,13 +136,15 @@ pub fn scasum(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
 
 pub fn scasum_always_correct(n: HanInt, x: &[c32], incx: HanInt) -> f32 {
     let mut stemp = 0.0f32;
-    if n <= 0 || incx <= 0 {return 0.0f32;}
+    if n <= 0 || incx <= 0 {
+        return 0.0f32;
+    }
     if incx == 1 {
         for i in 0..n as usize {
             stemp = stemp + x[i].re.abs() + x[i].im.abs();
         }
     } else {
-        let nincx = n*incx;
+        let nincx = n * incx;
         for i in (0..nincx as usize).step_by(incx as usize) {
             stemp = stemp + x[i].re.abs() + x[i].im.abs();
         }
@@ -143,20 +160,21 @@ pub fn dzasum(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
 
 pub fn dzasum_always_correct(n: HanInt, x: &[c64], incx: HanInt) -> f64 {
     let mut dtemp = 0.0f64;
-    if n <= 0 || incx <= 0 {return 0.0f64;}
+    if n <= 0 || incx <= 0 {
+        return 0.0f64;
+    }
     if incx == 1 {
         for i in 0..n as usize {
             dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
         }
     } else {
-        let nincx = n*incx;
+        let nincx = n * incx;
         for i in (0..nincx as usize).step_by(incx as usize) {
             dtemp = dtemp + x[i].re.abs() + x[i].im.abs();
         }
     }
     return dtemp;
 }
-
 
 #[cfg(test)]
 mod tests {
