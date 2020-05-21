@@ -22,7 +22,7 @@ pub unsafe fn sdot_generic(
 
     if incx == 1 && incy == 1 {
         let m = n - n % 4;
-        let px_unroll = px.offset(n as isize);
+        let px_unroll = px.offset(m as isize);
         while px < px_unroll {
             ret = ret
                 + (*px) * (*py)
@@ -70,7 +70,7 @@ pub unsafe fn ddot_generic(
 
     if incx == 1 && incy == 1 {
         let m = n - n % 4;
-        let px_unroll = px.offset(n as isize);
+        let px_unroll = px.offset(m as isize);
         while px < px_unroll {
             ret = ret
                 + (*px) * (*py)

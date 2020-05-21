@@ -1,4 +1,4 @@
-#![feature(asm)]
+#![feature(llvm_asm)]
 #![feature(ptr_offset_from)]
 
 pub mod kernel;

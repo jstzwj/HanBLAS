@@ -35,7 +35,7 @@ pub unsafe fn sasum_x86_64_avx(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         
 
         let mut temp_array: [f32; 8] = [0.0f32; 8];
-        asm!("
+        llvm_asm!("
             vpcmpeqb %ymm0, %ymm0, %ymm0
             vpsrld $$1, %ymm0, %ymm0
 
@@ -110,7 +110,7 @@ pub unsafe fn sasum_x86_64_avx(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         }
 
         let mut sum: f32 = 0.0f32;
-        asm!("
+        llvm_asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15
 
@@ -273,7 +273,7 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         
 
         let mut temp_array: [f32; 4] = [0.0f32; 4];
-        asm!("
+        llvm_asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15
 
@@ -348,7 +348,7 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         }
 
         let mut sum: f32 = 0.0f32;
-        asm!("
+        llvm_asm!("
             pcmpeqb %xmm15, %xmm15
             psrld $$1, %xmm15
 

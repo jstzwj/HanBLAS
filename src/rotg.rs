@@ -1,6 +1,11 @@
 use super::util::sign;
 
-pub fn srotg(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {}
+pub fn srotg(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {
+    #[cfg(feature = "naive")]
+    return srotg_always_correct(a, b, c, s);
+    unsafe {
+    }
+}
 
 #[allow(dead_code)]
 pub fn srotg_always_correct(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {
@@ -32,7 +37,12 @@ pub fn srotg_always_correct(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) 
     *b = z;
 }
 
-pub fn drotg(a: &mut f64, b: &mut f64, c: &mut f64, s: &mut f64) {}
+pub fn drotg(a: &mut f64, b: &mut f64, c: &mut f64, s: &mut f64) {
+    #[cfg(feature = "naive")]
+    return drotg_always_correct(a, b, c, s);
+    unsafe {
+    }
+}
 
 #[allow(dead_code)]
 pub fn drotg_always_correct(a: &mut f64, b: &mut f64, c: &mut f64, s: &mut f64) {
