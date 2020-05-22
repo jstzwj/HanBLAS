@@ -53,67 +53,68 @@ pub fn sgbmv_always_correct(
         info = 13
     }
     if info != 0 {
-        CALL xerbla('SGBMV ',info)
-        RETURN
+        panic!(format!("SGBMV {}", info));
+        return;
     }
-    if ((m == 0)  ||  (n == 0)  || 
-    +    ((alpha == zero)&& (beta == one))) RETURN
-    if (lsame(trans,'N')) {
-        lenx = n
-        leny = m
-    else
-        lenx = m
-        leny = n
+    if (m == 0)  ||  (n == 0)  || ((alpha == zero)&& (beta == one)) {return;}
+    let mut lenx;
+    let mut leny;
+    if lsame(trans,'N') {
+        lenx = n;
+        leny = m;
+    } else {
+        lenx = m;
+        leny = n;
     }
-    if (incx>0) {
+    if incx>0 {
         kx = 1;
     } else {
-        kx = 1 - (lenx-1)*incx
+        kx = 1 - (lenx-1)*incx;
     }
-    if (incy>0) {
-        ky = 1
+    if incy>0 {
+        ky = 1;
     } else {
-        ky = 1 - (leny-1)*incy
+        ky = 1 - (leny-1)*incy;
     }
-    if (beta != one) {
-        if (incy == 1) {
-            if (beta == zero) {
-                DO i = 1,leny
-                    y(i) = zero
-                CONTINUE
+    if beta != one {
+        if incy == 1 {
+            if beta == zero {
+                for i in 0..leny {
+                    y[i] = zero;
+                }
             } else {
-                DO 20 i = 1,leny
-                    y(i) = beta*y(i)
-                CONTINUE
+                for i in 0..leny {
+                    y[i] = beta*y[i];
+                }
             }
         else
-            iy = ky
-            if (beta == zero) {
-                DO 30 i = 1,leny
-                    y(iy) = zero
-                    iy = iy + incy
-                CONTINUE
+            let mut iy = ky;
+            if beta == zero {
+                for i in 0..leny {
+                    y[iy] = zero;
+                    iy = iy + incy;
+                }
             } else {
-                DO i = 1,leny
-                    y(iy) = beta*y(iy)
-                    iy = iy + incy
-                CONTINUE
+                for i in 0..leny {
+                    y[iy] = beta*y[iy];
+                    iy = iy + incy;
+                }
             }
         }
     }
-    if (alpha == zero) RETURN
+    if alpha == zero {return;}
     kup1 = ku + 1
-    if (lsame(trans,'N')) {
-        jx = kx
-        if (incy == 1) {
-            DO 60 j = 1,n
-                temp = alpha*x(jx)
-                k = kup1 - j
+    if lsame(trans,'N') {
+        let mut jx = kx;
+        if incy == 1 {
+            for j in 0..n {
+                temp = alpha*x(jx);
+                k = kup1 - j;
                 DO 50 i = max(1,j-ku),min(m,j+kl)
                     y(i) = y(i) + temp*a(k+i,j)
                 CONTINUE
                 jx = jx + incx
-            CONTINUE
+            }
         } else {
             DO 80 j = 1,n
                 temp = alpha*x(jx)

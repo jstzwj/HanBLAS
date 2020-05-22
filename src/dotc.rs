@@ -2,6 +2,18 @@ use crate::util::{cconjg, zconjg};
 use crate::{c32, c64, HanInt};
 
 pub fn cdotu(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy: HanInt) -> c32 {
+    // check array length first
+    assert!(
+        x.len() as HanInt >= 1 + (n - 1) * incx.abs(),
+        "the dimension of x should greater than 1+(n-1)*abs(incx)"
+    );
+    assert!(
+        y.len() as HanInt >= 1 + (n - 1) * incy.abs(),
+        "the dimension of y should greater than 1+(n-1)*abs(incy)"
+    );
+    #[cfg(feature = "naive")]
+    return cdotu_always_correct(n, x, incx, y, incy);
+
     return c32::new(0.0, 0.0);
 }
 
@@ -33,6 +45,18 @@ pub fn cdotu_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy:
     return ret;
 }
 pub fn zdotu(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy: HanInt) -> c64 {
+    // check array length first
+    assert!(
+        x.len() as HanInt >= 1 + (n - 1) * incx.abs(),
+        "the dimension of x should greater than 1+(n-1)*abs(incx)"
+    );
+    assert!(
+        y.len() as HanInt >= 1 + (n - 1) * incy.abs(),
+        "the dimension of y should greater than 1+(n-1)*abs(incy)"
+    );
+    #[cfg(feature = "naive")]
+    return zdotu_always_correct(n, x, incx, y, incy);
+
     return c64::new(0.0, 0.0);
 }
 
