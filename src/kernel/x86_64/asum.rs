@@ -1,3 +1,4 @@
+#[cfg(feature = "thread")]
 use rayon::prelude::*;
 
 #[cfg(target_arch = "x86_64")]

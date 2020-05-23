@@ -2,6 +2,8 @@ pub mod asum;
 pub mod axpy;
 pub mod copy;
 pub mod dot;
+pub mod dotc;
+pub mod dotu;
 pub mod rot;
 pub mod rotg;
 pub mod rotm;

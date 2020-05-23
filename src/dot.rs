@@ -112,7 +112,20 @@ pub fn ddot_always_correct(n: HanInt, x: &[f64], incx: HanInt, y: &[f64], incy: 
 }
 
 pub fn dsdot(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f64 {
-    return 0.0;
+    // check array length first
+    assert!(
+        x.len() as HanInt >= 1 + (n - 1) * incx.abs(),
+        "the dimension of x should greater than 1+(n-1)*abs(incx)"
+    );
+    assert!(
+        y.len() as HanInt >= 1 + (n - 1) * incy.abs(),
+        "the dimension of y should greater than 1+(n-1)*abs(incy)"
+    );
+    #[cfg(feature = "naive")]
+    return dsdot_always_correct(n, x, incx, y, incy);
+    unsafe {
+        return 0.0;
+    }
 }
 
 pub fn dsdot_always_correct(n: HanInt, x: &[f32], incx: HanInt, y: &[f32], incy: HanInt) -> f64 {

@@ -3,8 +3,6 @@ use super::util::sign;
 pub fn srotg(a: &mut f32, b: &mut f32, c: &mut f32, s: &mut f32) {
     #[cfg(feature = "naive")]
     return srotg_always_correct(a, b, c, s);
-    unsafe {
-    }
 }
 
 #[allow(dead_code)]
