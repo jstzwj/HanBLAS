@@ -12,14 +12,14 @@ pub fn sswap_always_correct(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32
     if incx == 1 && incy == 1 {
         let m = n%3;
         if m != 0 {
-            for i in 0..m {
+            for i in 0..m as usize {
                 let temp = x[i];
                 x[i] = y[i];
                 y[i] = temp;
             }
             if n < 3 {return;}
         }
-        for i in (m..n).step_by(3) {
+        for i in (m as usize..n as usize).step_by(3) {
             let mut temp:f32 = 0.0f32;
             temp = x[i];
             x[i] = y[i];
@@ -32,18 +32,18 @@ pub fn sswap_always_correct(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32
             y[i+2] = temp;
         }
     } else {
-        let mut ix = 0;
-        let mut iy = 0;
+        let mut ix= 0;
+        let mut iy= 0;
         if incx < 0 {
             ix = (-n+1)*incx + 1;
         }
         if incy < 0 {
             iy = (-n+1)*incy + 1;
         }
-        for i in 0..n {
-            let temp = x[ix];
-            x[ix] = y[iy];
-            y[iy] = temp;
+        for i in 0..n as usize {
+            let temp = x[ix as usize];
+            x[ix as usize] = y[iy as usize];
+            y[iy as usize] = temp;
             ix = ix + incx;
             iy = iy + incy;
         }
@@ -57,20 +57,20 @@ pub fn dswap(n: HanInt, x: &mut [f64], incx: HanInt, y: &mut [f64], incy: HanInt
     }
 }
 
-pub fn dswap_always_correct(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32], incy: HanInt) {
+pub fn dswap_always_correct(n: HanInt, x: &mut [f64], incx: HanInt, y: &mut [f64], incy: HanInt) {
     if n <= 0 {return;}
     if incx == 1 && incy == 1 {
         let m = n%4;
         if m != 0 {
-            for i in 0..m {
+            for i in 0..m as usize {
                 let temp = x[i];
                 x[i] = y[i];
                 y[i] = temp;
             }
             if n < 4 {return;}
         }
-        for i in (m..n).step_by(4) {
-            let mut temp:f32 = 0.0f64;
+        for i in (m as usize..n as usize).step_by(4) {
+            let mut temp:f64 = 0.0f64;
             temp = x[i];
             x[i] = y[i];
             y[i] = temp;
@@ -90,10 +90,10 @@ pub fn dswap_always_correct(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32
         if incy < 0 {
             iy = (-n+1)*incy + 1;
         }
-        for i in 0..n {
-            let temp = x[ix];
-            x[ix] = y[iy];
-            y[iy] = temp;
+        for i in 0..n as usize {
+            let temp = x[ix as usize];
+            x[ix as usize] = y[iy as usize];
+            y[iy as usize] = temp;
             ix = ix + incx;
             iy = iy + incy;
         }
@@ -112,14 +112,14 @@ pub fn cswap_always_correct(n: HanInt, x: &mut [c32], incx: HanInt, y: &mut [c32
     if incx == 1 && incy == 1 {
         let m = n%3;
         if m != 0 {
-            for i in 0..m {
+            for i in 0..m as usize {
                 let temp = x[i];
                 x[i] = y[i];
                 y[i] = temp;
             }
             if n < 3 {return;}
         }
-        for i in (m..n).step_by(3) {
+        for i in (m as usize..n as usize).step_by(3) {
             let mut temp:c32 = c32::new(0.0, 0.0);
             temp = x[i];
             x[i] = y[i];
@@ -140,10 +140,10 @@ pub fn cswap_always_correct(n: HanInt, x: &mut [c32], incx: HanInt, y: &mut [c32
         if incy < 0 {
             iy = (-n+1)*incy + 1;
         }
-        for i in 0..n {
-            let temp = x[ix];
-            x[ix] = y[iy];
-            y[iy] = temp;
+        for i in 0..n as usize {
+            let temp = x[ix as usize];
+            x[ix as usize] = y[iy as usize];
+            y[iy as usize] = temp;
             ix = ix + incx;
             iy = iy + incy;
         }
@@ -162,14 +162,14 @@ pub fn zswap_always_correct(n: HanInt, x: &mut [c64], incx: HanInt, y: &mut [c64
     if incx == 1 && incy == 1 {
         let m = n%3;
         if m != 0 {
-            for i in 0..m {
+            for i in 0..m as usize {
                 let temp = x[i];
                 x[i] = y[i];
                 y[i] = temp;
             }
             if n < 3 {return;}
         }
-        for i in (m..n).step_by(3) {
+        for i in (m as usize..n as usize).step_by(3) {
             let mut temp:c64 = c64::new(0.0, 0.0);
             temp = x[i];
             x[i] = y[i];
@@ -190,10 +190,10 @@ pub fn zswap_always_correct(n: HanInt, x: &mut [c64], incx: HanInt, y: &mut [c64
         if incy < 0 {
             iy = (-n+1)*incy + 1;
         }
-        for i in 0..n {
-            let temp = x[ix];
-            x[ix] = y[iy];
-            y[iy] = temp;
+        for i in 0..n as usize {
+            let temp = x[ix as usize];
+            x[ix as usize] = y[iy as usize];
+            y[iy as usize] = temp;
             ix = ix + incx;
             iy = iy + incy;
         }
