@@ -1,4 +1,3 @@
-use crate::util::{cconjg, zconjg};
 use crate::{c32, c64, HanInt};
 
 pub fn cdotu(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy: HanInt) -> c32 {
@@ -25,7 +24,7 @@ pub fn cdotu_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy:
     }
     if incx == 1 && incy == 1 {
         for i in 0..n as usize {
-            ret = ret + cconjg(x[i]) * y[i];
+            ret = ret + x[i].conj() * y[i];
         }
     } else {
         let mut ix = 0;
@@ -37,7 +36,7 @@ pub fn cdotu_always_correct(n: HanInt, x: &[c32], incx: HanInt, y: &[c32], incy:
             iy = (-n + 1) * incy + 1;
         }
         for _ in 0..n {
-            ret = ret + cconjg(x[ix as usize]) * y[iy as usize];
+            ret = ret + x[ix as usize].conj() * y[iy as usize];
             ix = ix + incx;
             iy = iy + incy;
         }
@@ -68,7 +67,7 @@ pub fn zdotu_always_correct(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy:
     }
     if incx == 1 && incy == 1 {
         for i in 0..n as usize {
-            ret = ret + zconjg(x[i]) * y[i];
+            ret = ret + x[i].conj() * y[i];
         }
     } else {
         let mut ix = 0;
@@ -80,7 +79,7 @@ pub fn zdotu_always_correct(n: HanInt, x: &[c64], incx: HanInt, y: &[c64], incy:
             iy = (-n + 1) * incy + 1;
         }
         for _ in 0..n {
-            ret = ret + zconjg(x[ix as usize]) * y[iy as usize];
+            ret = ret + x[ix as usize].conj() * y[iy as usize];
             ix = ix + incx;
             iy = iy + incy;
         }

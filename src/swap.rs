@@ -20,16 +20,9 @@ pub fn sswap_always_correct(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32
             if n < 3 {return;}
         }
         for i in (m as usize..n as usize).step_by(3) {
-            let mut temp:f32 = 0.0f32;
-            temp = x[i];
-            x[i] = y[i];
-            y[i] = temp;
-            temp = x[i+1];
-            x[i+1] = y[i+1];
-            y[i+1] = temp;
-            temp = x[i+2];
-            x[i+2] = y[i+2];
-            y[i+2] = temp;
+            std::mem::swap(&mut x[i], &mut y[i]);
+            std::mem::swap(&mut x[i+1], &mut y[i+1]);
+            std::mem::swap(&mut x[i+2], &mut y[i+2]);
         }
     } else {
         let mut ix= 0;
@@ -70,16 +63,9 @@ pub fn dswap_always_correct(n: HanInt, x: &mut [f64], incx: HanInt, y: &mut [f64
             if n < 4 {return;}
         }
         for i in (m as usize..n as usize).step_by(4) {
-            let mut temp:f64 = 0.0f64;
-            temp = x[i];
-            x[i] = y[i];
-            y[i] = temp;
-            temp = x[i+1];
-            x[i+1] = y[i+1];
-            y[i+1] = temp;
-            temp = x[i+2];
-            x[i+2] = y[i+2];
-            y[i+2] = temp;
+            std::mem::swap(&mut x[i], &mut y[i]);
+            std::mem::swap(&mut x[i+1], &mut y[i+1]);
+            std::mem::swap(&mut x[i+2], &mut y[i+2]);
         }
     } else {
         let mut ix = 0;
@@ -120,16 +106,9 @@ pub fn cswap_always_correct(n: HanInt, x: &mut [c32], incx: HanInt, y: &mut [c32
             if n < 3 {return;}
         }
         for i in (m as usize..n as usize).step_by(3) {
-            let mut temp:c32 = c32::new(0.0, 0.0);
-            temp = x[i];
-            x[i] = y[i];
-            y[i] = temp;
-            temp = x[i+1];
-            x[i+1] = y[i+1];
-            y[i+1] = temp;
-            temp = x[i+2];
-            x[i+2] = y[i+2];
-            y[i+2] = temp;
+            std::mem::swap(&mut x[i], &mut y[i]);
+            std::mem::swap(&mut x[i+1], &mut y[i+1]);
+            std::mem::swap(&mut x[i+2], &mut y[i+2]);
         }
     } else {
         let mut ix = 0;
@@ -170,16 +149,9 @@ pub fn zswap_always_correct(n: HanInt, x: &mut [c64], incx: HanInt, y: &mut [c64
             if n < 3 {return;}
         }
         for i in (m as usize..n as usize).step_by(3) {
-            let mut temp:c64 = c64::new(0.0, 0.0);
-            temp = x[i];
-            x[i] = y[i];
-            y[i] = temp;
-            temp = x[i+1];
-            x[i+1] = y[i+1];
-            y[i+1] = temp;
-            temp = x[i+2];
-            x[i+2] = y[i+2];
-            y[i+2] = temp;
+            std::mem::swap(&mut x[i], &mut y[i]);
+            std::mem::swap(&mut x[i+1], &mut y[i+1]);
+            std::mem::swap(&mut x[i+2], &mut y[i+2]);
         }
     } else {
         let mut ix = 0;
