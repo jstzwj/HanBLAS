@@ -11,7 +11,7 @@ pub fn srot(n: HanInt, x: &mut [f32], incx: HanInt, y: &mut [f32], incy: HanInt,
         "the dimension of y should greater than 1+(n-1)*abs(incy)"
     );
     #[cfg(feature = "naive")]
-    return srot_always_correct(n, x, incx, y, incy);
+    return srot_always_correct(n, x, incx, y, incy, c, s);
     unsafe {
         return crate::kernel::generic::rot::srot_generic(
             n,
@@ -73,7 +73,7 @@ pub fn drot(n: HanInt, x: &mut [f64], incx: HanInt, y: &mut [f64], incy: HanInt,
         "the dimension of y should greater than 1+(n-1)*abs(incy)"
     );
     #[cfg(feature = "naive")]
-    return drot_always_correct(n, x, incx, y, incy);
+    return drot_always_correct(n, x, incx, y, incy, c, s);
     unsafe {
         return crate::kernel::generic::rot::drot_generic(
             n,
