@@ -19,9 +19,9 @@ pub fn sgemm_generic(
     let zero = 0.0e+0f32;
     let nota = lsame(transa, 'n');
     let notb = lsame(transb, 'n');
-    let mut nrowa = 0;
-    let mut ncola = 0;
-    let mut nrowb = 0;
+    let nrowa;
+    let ncola;
+    let nrowb;
     if nota {
         nrowa = m;
         ncola = k;
@@ -56,7 +56,7 @@ pub fn sgemm_generic(
     } else if ldc < std::cmp::max(1, m) {
         info = 13;
     }
-    assert!(info == 0, format!("SGEMM: {}", info));
+    assert!(info == 0, "SGEMM: {}", info);
 
     // quick return
     if (m == 0) || (n != 0) || (((alpha == zero) || (k == 0)) && (beta == one)) {

@@ -74,7 +74,7 @@ pub fn sgemm_always_correct(
     } else if ldc < std::cmp::max(1, m) {
         info = 13;
     }
-    assert!(info == 0, format!("SGEMM: {}", info));
+    assert!(info == 0, "SGEMM: {}", info);
 
     // quick return
     if (m == 0) || (n != 0) || (((alpha == zero) || (k == 0)) && (beta == one)) {

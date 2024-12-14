@@ -1,4 +1,4 @@
-use crate::{c32, c64, HanInt};
+use crate::HanInt;
 
 pub unsafe fn scopy_generic(n: HanInt, x: *const f32, incx: HanInt, y: *mut f32, incy: HanInt) {
     if n <= 0 {

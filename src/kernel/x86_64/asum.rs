@@ -1,8 +1,10 @@
 #[cfg(feature = "thread")]
 use rayon::prelude::*;
 
-#[cfg(target_arch = "x86_64")]
-use std::arch::x86_64::*;
+// #[cfg(target_arch = "x86_64")]
+// use std::arch::x86_64::*;
+
+use std::arch::asm;
 
 use crate::HanInt;
 
@@ -274,53 +276,55 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
         
 
         let mut temp_array: [f32; 4] = [0.0f32; 4];
-        llvm_asm!("
-            pcmpeqb %xmm15, %xmm15
-            psrld $$1, %xmm15
+        asm!(
+            "pcmpeqb xmm15, xmm15",
+            "psrld xmm15, 0x1",
 
-            xorps %xmm0, %xmm0
-            xorps %xmm1, %xmm1
-            xorps %xmm2, %xmm2
-            xorps %xmm3, %xmm3
+            "xorps xmm0, xmm0",
+            "xorps xmm1, xmm1",
+            "xorps xmm2, xmm2",
+            "xorps xmm3, xmm3",
 
-            movq $1, %rax
+            "movq rax, {px}",
 
-            cmp %rax, $2
-            jle sasum_x86_64_sse_inc1_sum_all
-            sasum_x86_64_sse_inc1_loop:
-            movaps (%rax), %xmm4
-            movaps 16(%rax), %xmm5
-            movaps 32(%rax), %xmm6
-            movaps 48(%rax), %xmm7
+            "cmp rax, {px_right_align}",
+            "jle 3f",
+            "2:",
+            "movaps [rax], xmm4",
+            "movaps [rax + 16], xmm5",
+            "movaps [rax + 32], xmm6",
+            "movaps [rax + 48], xmm7",
 
-            andps %xmm15, %xmm4
-            addps %xmm4, %xmm0
+            "andps xmm15, xmm4",
+            "addps xmm4, xmm0",
 
-            andps %xmm15, %xmm5
-            addps %xmm5, %xmm1
+            "andps xmm15, xmm5",
+            "addps xmm5, xmm1",
 
-            andps %xmm15, %xmm6
-            addps %xmm6, %xmm2
+            "andps xmm15, xmm6",
+            "addps xmm6, xmm2",
             
-            andps %xmm15, %xmm7
-            addps %xmm7, %xmm3
+            "andps xmm15, xmm7",
+            "addps xmm7, xmm3",
 
-            addq $$64, %rax
-            cmp %rax, $2
-            ja sasum_x86_64_sse_inc1_loop
+            "addq 64, rax",
+            "cmp rax, {px_right_align}",
+            "ja 2b",
             
-            sasum_x86_64_sse_inc1_sum_all:
-            addps %xmm1, %xmm0
-            addps %xmm3, %xmm2
-            addps %xmm2, %xmm0
-            movups %xmm0, $0
+            "3:",
+            "addps xmm1, xmm0",
+            "addps xmm3, xmm2",
+            "addps xmm2, xmm0",
+            "movups xmm0, {temp_array}",
 
-            movq %rax, $1
-            "
-            : "=*m"(temp_array.as_mut_ptr()), "=r"(px)
-            : "m"(px_right_align), "1"(px)
-            : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm15"
+            "movq rax, {px}",
+            temp_array = in(reg) &mut temp_array,
+            px = inout(reg) px,
+            px_right_align = in(reg) px_right_align,
         );
+        // Output: "=*m"(temp_array.as_mut_ptr()), "=r"(px)
+        // Input: "m"(px_right_align), "1"(px)
+        // : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7", "xmm15"
 
         // println!("{:?}", temp_array);
 
@@ -348,79 +352,83 @@ pub unsafe fn sasum_x86_64_sse(n: HanInt, x: *const f32, incx: HanInt) -> f32 {
             px = px.offset(incx as isize);
         }
 
+        let step_bytes: usize = incx as usize * std::mem::size_of::<f32>();
         let mut sum: f32 = 0.0f32;
-        llvm_asm!("
-            pcmpeqb %xmm15, %xmm15
-            psrld $$1, %xmm15
+        asm!(
+            "pcmpeqb xmm15, xmm15",
+            "psrld 0x1, xmm15",
 
-            xorps %xmm0, %xmm0
-            xorps %xmm1, %xmm1
-            xorps %xmm2, %xmm2
-            xorps %xmm3, %xmm3
+            "xorps xmm0, xmm0",
+            "xorps xmm1, xmm1",
+            "xorps xmm2, xmm2",
+            "xorps xmm3, xmm3",
 
-            movq $1, %rax
+            "movq {px}, rax",
 
-            cmp %rax, $2
-            jle sasum_x86_64_sse_incx_sum_all
-            sasum_x86_64_sse_incx_loop:
+            "cmp rax, {px_end}",
+            "jle 3f",
+            "2:",
 
-            # load data from memory to xmm4-7, then abs and sum.
-            movss (%rax), %xmm4
-            addq $3, %rax
-            andps %xmm15, %xmm4
-            addss %xmm4, %xmm0
+            // load data from memory to xmm4-7, then abs and sum.
+            "movss [rax], xmm4",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm4",
+            "addss xmm4, xmm0",
 
-            movss (%rax), %xmm5
-            addq $3, %rax
-            andps %xmm15, %xmm5
-            addss %xmm5, %xmm1
+            "movss [rax], xmm5",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm5",
+            "addss xmm5, xmm1",
 
-            movss (%rax), %xmm6
-            addq $3, %rax
-            andps %xmm15, %xmm6
-            addss %xmm6, %xmm2
+            "movss [rax], xmm6",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm6",
+            "addss xmm6, xmm2",
 
-            movss (%rax), %xmm7
-            addq $3, %rax
-            andps %xmm15, %xmm7
-            addss %xmm7, %xmm3
+            "movss [rax], xmm7",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm7",
+            "addss xmm7, xmm3",
 
-            movss (%rax), %xmm4
-            addq $3, %rax
-            andps %xmm15, %xmm4
-            addss %xmm4, %xmm0
+            "movss [rax], xmm4",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm4",
+            "addss xmm4, xmm0",
 
-            movss (%rax), %xmm5
-            addq $3, %rax
-            andps %xmm15, %xmm5
-            addss %xmm5, %xmm1
+            "movss [rax], xmm5",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm5",
+            "addss xmm5, xmm1",
 
-            movss (%rax), %xmm6
-            addq $3, %rax
-            andps %xmm15, %xmm6
-            addss %xmm6, %xmm2
+            "movss [rax], xmm6",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm6",
+            "addss xmm6, xmm2",
 
-            movss (%rax), %xmm7
-            addq $3, %rax
-            andps %xmm15, %xmm7
-            addss %xmm7, %xmm3
+            "movss [rax], xmm7",
+            "addq {step_bytes}, rax",
+            "andps xmm15, xmm7",
+            "addss xmm7, xmm3",
             
-            cmp %rax, $2
-            ja sasum_x86_64_sse_incx_loop
+            "cmp rax, {px_end}",
+            "ja 2b",
             
-            sasum_x86_64_sse_incx_sum_all:
-            addss %xmm1, %xmm0
-            addss %xmm3, %xmm2
-            addss %xmm2, %xmm0
-            movss %xmm0, $0
+            "3:",
+            "addss xmm1, xmm0",
+            "addss xmm3, xmm2",
+            "addss xmm2, xmm0",
+            "movss xmm0, {sum}",
 
-            movq %rax, $1
-            "
-            : "=*m"(&mut sum as *mut f32), "=r"(px)
-            : "m"(px_end), "r"(incx as usize * std::mem::size_of::<f32>()), "1"(px)
-            : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4",
-                "xmm5", "xmm6", "xmm7", "xmm15"
+            "movq rax, {px}",
+            sum = in(reg) &mut sum,
+            px = inout(reg) px,
+            step_bytes = in(reg) step_bytes,
+            px_end = in(reg) px_end,
         );
+        // Output: "=*m"(&mut sum as *mut f32), "=r"(px)
+        // Input: "m"(px_end), "r"(incx as usize * std::mem::size_of::<f32>()), "1"(px)
+        // : "rax", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4",
+        //     "xmm5", "xmm6", "xmm7", "xmm15"
         // println!("{:?}", sum);
         ret = ret + sum;
     }

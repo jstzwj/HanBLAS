@@ -1,4 +1,4 @@
-use crate::{HanInt, c32, c64};
+use crate::HanInt;
 
 pub unsafe fn srot_generic(
     n: HanInt,

@@ -1,4 +1,4 @@
-use crate::{c32, c64, HanInt};
+use crate::HanInt;
 
 pub unsafe fn sdot_generic(
     n: HanInt,

@@ -2,7 +2,7 @@
 name = "hanblas"
 version = "0.0.1"
 authors = ["JunWang <jstzwj@aliyun.com>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 description = "A BLAS written in Rust"
 repository = "https://github.com/jstzwj/HanBLAS/"

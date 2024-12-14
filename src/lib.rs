@@ -1,6 +1,3 @@
-#![feature(llvm_asm)]
-#![feature(ptr_offset_from)]
-
 pub mod kernel;
 pub mod util;
 // level 1
